@@ -1,7 +1,7 @@
 package com.rosberry.pine.ui.activity
 
 import android.os.Bundle
-import android.os.PersistableBundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.androidx.AppNavigator
@@ -15,6 +15,7 @@ import javax.inject.Inject
 class AppActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAppBinding
+    private val viewModel: AppViewModel by viewModels()
 
     @Inject
     lateinit var navigatorHolder: NavigatorHolder
@@ -25,6 +26,7 @@ class AppActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAppBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        viewModel.openFirstScreen()
     }
 
     override fun onResumeFragments() {

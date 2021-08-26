@@ -1,5 +1,15 @@
 package com.rosberry.pine.ui.activity
 
+import com.github.terrakok.cicerone.Router
+import com.rosberry.pine.navigation.Screens
 import com.rosberry.pine.ui.base.BaseViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class AppViewModel : BaseViewModel()
+@HiltViewModel
+class AppViewModel @Inject constructor(router: Router) : BaseViewModel(router) {
+
+    fun openFirstScreen() {
+        router.navigateTo(Screens.Splash)
+    }
+}
