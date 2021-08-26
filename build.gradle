@@ -4,7 +4,7 @@ buildscript {
     ext.roomVersion = "2.3.0"
     ext.picassoVersion = "2.71828"
     ext.hiltVersion = "2.38.1"
-    ext.lifecycleVersion = "2.38.1"
+    ext.lifecycleVersion = "2.4.0-alpha03"
     ext.ciceroneVersion = "7.1"
 
     repositories {

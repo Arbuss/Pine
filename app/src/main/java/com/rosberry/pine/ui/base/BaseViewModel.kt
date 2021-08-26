@@ -6,7 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-open class BaseViewModel : ViewModel() {
+open class BaseViewModel @Inject constructor() : ViewModel() {
 
     @Inject
     lateinit var router: Router
