@@ -3,6 +3,8 @@
 
     <!-- Main Screeen-->
     <string name="main_fragment_app_bar_title">Pine</string>
-    <string name="main_fragment_view_pager_tab_feed">Feed</string>
-    <string name="main_fragment_view_pager_tab_favorite">Favorite</string>
+    <string-array name="main_fragment_view_pager_tabs">
+        <item>Feed</item>
+        <item>Favorite</item>
+    </string-array>
 </resources>
