@@ -13,7 +13,7 @@
         <activity android:name=".ui.activity.AppActivity"
             android:exported="true"
             android:label="Pine"
-            android:theme="@style/Theme.Design.NoActionBar"
+            android:theme="@style/Theme.Pine"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

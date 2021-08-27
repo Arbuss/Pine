@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.viewModels
 import com.rosberry.pine.databinding.FragmentSplashBinding
 import com.rosberry.pine.ui.base.BaseFragment
@@ -22,6 +23,7 @@ class SplashFragment : BaseFragment() {
             savedInstanceState: Bundle?
     ): View? {
         binding = FragmentSplashBinding.inflate(inflater, container, false)
+        backgroundPositioning()
         return binding?.root
     }
 
@@ -33,5 +35,15 @@ class SplashFragment : BaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
+    }
+
+    private fun backgroundPositioning() {
+        val resources = context?.resources
+        val resourceId = resources?.getIdentifier("navigation_bar_height", "dimen", "android")
+        resourceId?.let {
+            binding?.root?.updateLayoutParams {
+                (this as? ViewGroup.MarginLayoutParams)?.topMargin = resources?.getDimensionPixelSize(resourceId) / 2
+            }
+        }
     }
 }
