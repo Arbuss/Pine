@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Pine</string>
+
+    <!-- Main Screeen-->
+    <string name="main_fragment_app_bar_title">Pine</string>
+    <string name="main_fragment_view_pager_tab_feed">Feed</string>
+    <string name="main_fragment_view_pager_tab_favorite">Favorite</string>
 </resources>
