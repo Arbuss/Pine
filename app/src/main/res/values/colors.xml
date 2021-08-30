@@ -9,4 +9,5 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="background_color">@color/white</color>
+    <color name="background_color_feed_item">#61000000</color>
 </resources>

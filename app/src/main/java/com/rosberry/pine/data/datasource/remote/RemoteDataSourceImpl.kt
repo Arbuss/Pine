@@ -20,6 +20,6 @@ class RemoteDataSourceImpl @Inject constructor(private val api: UnsplashApi) : R
         }
     }
 
-    private fun NTOImage.toDTO(): DTOImage = DTOImage(id, description, urls.toDTO())
-    private fun NTOUrls.toDTO(): DTOUrls = DTOUrls(raw, regular, thumb)
+    private fun NTOImage.toDTO(): DTOImage = DTOImage(id, description, urls.toDTO(), width, height, blurHash)
+    private fun NTOUrls.toDTO(): DTOUrls = DTOUrls(raw, regular, small, thumb)
 }

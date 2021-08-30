@@ -9,14 +9,14 @@ import androidx.viewbinding.ViewBinding
 
 abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
+    protected var binding: VB? = null
+
     abstract fun setTitle()
 
     abstract fun createViewBinding(
             inflater: LayoutInflater,
             container: ViewGroup?
     ): VB?
-
-    protected var binding: VB? = null
 
     override fun onCreateView(
             inflater: LayoutInflater,

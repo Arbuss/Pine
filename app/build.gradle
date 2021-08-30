@@ -21,6 +21,7 @@ android {
     buildTypes {
         debug {
             buildConfigField("String", "BASE_URL", "\"https://api.unsplash.com/\"")
+            buildConfigField("String", "API_KEY", "\"MZj_nI7c9DxfTHwFCQLk5_VO4aiKCepfHEQR2Fbtg4o\"")
         }
         release {
             minifyEnabled false

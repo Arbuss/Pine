@@ -6,5 +6,6 @@ import androidx.annotation.Keep
 data class NTOUrls(
         val raw: String,
         val regular: String,
+        val small: String,
         val thumb: String
 )
