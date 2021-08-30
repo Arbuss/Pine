@@ -19,6 +19,9 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "BASE_URL", "\"https://api.unsplash.com/\"")
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -51,6 +54,7 @@ dependencies {
 
     // Retrofit https://github.com/square/retrofit
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
 
     // Room https://developer.android.com/jetpack/androidx/releases/room
     implementation "androidx.room:room-runtime:$roomVersion"
