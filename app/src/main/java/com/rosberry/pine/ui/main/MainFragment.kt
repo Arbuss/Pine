@@ -24,15 +24,16 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
     override fun createViewBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentMainBinding? =
             FragmentMainBinding.inflate(inflater, container, false)
 
-    override fun setTitle() {
-        binding?.topBar?.appName?.text = getText(R.string.main_fragment_app_bar_title)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
+        setTitle()
         initViewPager()
         initTabs()
         return binding?.root
+    }
+
+    private fun setTitle() {
+        binding?.topBar?.appName?.text = getText(R.string.main_fragment_app_bar_title)
     }
 
     private fun initViewPager() {

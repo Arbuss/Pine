@@ -7,5 +7,6 @@ data class FeedItem(
         val description: String,
         val url: String,
         val width: Int,
-        val height: Int
+        val height: Int,
+        val isLiked: Boolean
 ): BaseAdapterItem

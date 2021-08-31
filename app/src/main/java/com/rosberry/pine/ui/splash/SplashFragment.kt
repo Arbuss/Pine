@@ -15,8 +15,6 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>() {
 
     private val viewModel: SplashViewModel by viewModels()
 
-    override fun setTitle() {}
-
     override fun createViewBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSplashBinding? =
             FragmentSplashBinding.inflate(inflater, container, false)
 

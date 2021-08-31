@@ -11,8 +11,6 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
     protected var binding: VB? = null
 
-    abstract fun setTitle()
-
     abstract fun createViewBinding(
             inflater: LayoutInflater,
             container: ViewGroup?
@@ -24,7 +22,6 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
             savedInstanceState: Bundle?
     ): View? {
         binding = createViewBinding(inflater, container)
-        setTitle()
         return binding?.root
     }
 

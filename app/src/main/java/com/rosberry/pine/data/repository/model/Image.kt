@@ -4,11 +4,12 @@ import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 
 @Keep
-data class DTOImage(
+data class Image(
         val id: String,
         val description: String?,
-        val urls: DTOUrls,
+        val urls: Urls,
         val width: Int,
         val height: Int,
-        @SerializedName("blur_hash") val blurHash: String
+        @SerializedName("blur_hash") val blurHash: String,
+        @SerializedName("liked_by_user") val isLiked: Boolean
 )
