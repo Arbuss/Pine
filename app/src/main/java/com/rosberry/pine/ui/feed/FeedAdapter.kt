@@ -45,6 +45,7 @@ class FeedAdapter : BaseAdapter<FeedItem, ItemFeedBinding>(mutableListOf()) {
                 .noPlaceholder()
                 .resize(item.width, item.height)
                 .centerCrop()
+                .onlyScaleDown()
                 .into(binding.image)
         }
     }
