@@ -1,10 +1,12 @@
 package com.rosberry.pine.ui.feed
 
+import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -27,11 +29,10 @@ class FeedFragment : ObservableBaseFragment<FragmentFeedBinding>() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
 
-        val displayMetrics = DisplayMetrics()
-        requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
+        binding?.feedList?.adapter = FeedAdapter()
 
-        binding?.feedList?.adapter = FeedAdapter(displayMetrics.widthPixels)
-        viewModel.init()
+        viewModel.init(getScreenWidth())
+
         return binding?.root
     }
 
@@ -48,6 +49,19 @@ class FeedFragment : ObservableBaseFragment<FragmentFeedBinding>() {
                     }
                 }
             }
+        }
+    }
+
+    private fun getScreenWidth(): Int {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val windowMetrics = requireActivity().windowManager.currentWindowMetrics
+            val insets = windowMetrics.windowInsets
+                .getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+            windowMetrics.bounds.width() - insets.left - insets.right
+        } else {
+            val displayMetrics = DisplayMetrics()
+            requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
+            displayMetrics.widthPixels
         }
     }
 }

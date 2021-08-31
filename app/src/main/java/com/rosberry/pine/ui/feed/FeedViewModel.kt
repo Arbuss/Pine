@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import xyz.belvi.blurhash.BlurHashDecoder
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,18 +23,24 @@ class FeedViewModel @Inject constructor(router: Router, private val imageInterac
     private val _newPage = MutableStateFlow(Resource.Success(listOf<FeedItem>()))
     val newPage: StateFlow<Resource<List<FeedItem>>> = _newPage
 
-    fun init() {
+    fun init(screenWidth: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             val newPhotos = imageInteractor.getPage(1, 10)
             photos.addAll(photos)
 
             if (newPhotos is Resource.Success) {
                 _newPage.value = Resource.Success(newPhotos.item.map { image: Image ->
+                    val multiplier = image.width / screenWidth + 1
+
+                    val imageWidth = screenWidth
+                    val imageHeight = (image.height / multiplier) + (screenWidth - imageWidth)
+
                     FeedItem(image.id,
                             image.description ?: "",
                             image.urls.small,
-                            image.width,
-                            image.height,
+                            imageWidth,
+                            imageHeight,
+                            BlurHashDecoder.decode(image.blurHash, screenWidth, imageHeight),
                             image.isLiked)
                 })
             }
