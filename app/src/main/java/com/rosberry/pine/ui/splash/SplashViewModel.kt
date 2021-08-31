@@ -10,12 +10,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SplashViewModel @Inject constructor(router: Router): BaseViewModel(router) {
+class SplashViewModel @Inject constructor(router: Router) : BaseViewModel(router) {
 
     fun goToNextScreen() {
         viewModelScope.launch {
             delay(3000)
-            router.navigateTo(Screens.Main)
+            router.newRootScreen(Screens.Main)
         }
     }
 }
