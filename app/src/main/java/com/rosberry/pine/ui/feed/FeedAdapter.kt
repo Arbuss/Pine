@@ -44,7 +44,7 @@ class FeedAdapter : BaseAdapter<FeedItem, ItemFeedBinding>(mutableListOf()) {
                 .load(item.url)
                 .noPlaceholder()
                 .resize(item.width, item.height)
-                .centerInside()
+                .centerCrop()
                 .into(binding.image)
         }
     }
