@@ -11,10 +11,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
+        android:contentDescription="@string/view_top_bar_content_description_app_logo"
         android:src="@drawable/ic_logo_pine_24" />
 
     <TextView android:id="@+id/app_name"
-        style="@style/TextView20"
+        style="@style/Title2B"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -26,12 +27,14 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:background="@android:color/transparent"
+        android:contentDescription="@string/view_top_bar_content_description_search_button"
         android:src="@drawable/ic_search" />
 
     <ImageButton android:id="@+id/profile_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="24dp"
         android:background="@android:color/transparent"
+        android:contentDescription="@string/view_top_bar_content_description_profile_button"
         android:src="@drawable/ic_profile" />
 </LinearLayout>

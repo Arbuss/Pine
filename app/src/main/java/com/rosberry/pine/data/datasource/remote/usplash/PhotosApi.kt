@@ -1,13 +1,11 @@
 package com.rosberry.pine.data.datasource.remote.usplash
 
-import com.rosberry.pine.BuildConfig
 import com.rosberry.pine.data.repository.model.Image
-import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.GET
-import retrofit2.http.Headers
 import retrofit2.http.Query
 
-interface UnsplashApi {
+interface PhotosApi {
     companion object {
 
         const val BAD_REQUEST = 200
@@ -17,10 +15,9 @@ interface UnsplashApi {
         const val SERVER_ERROR_2 = 503
     }
 
-    @Headers("Authorization: Client-ID ${BuildConfig.API_KEY}")
     @GET("/photos")
-    fun getPage(
+    suspend fun getPage(
             @Query("page") page: Int,
             @Query("per_page") pageLength: Int
-    ): Call<List<Image>>
+    ): Response<List<Image>>
 }

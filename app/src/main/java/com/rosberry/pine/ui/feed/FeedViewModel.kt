@@ -66,7 +66,7 @@ class FeedViewModel @Inject constructor(router: Router, private val imageInterac
     }
 
     private fun errorHandling(exception: Throwable) {
-        _error.value = when(exception) {
+        _error.value = when (exception) {
             is RepositoryError.ServerError -> FeedError.SERVER_ERROR
             is RepositoryError.NoConnectionError -> FeedError.NO_CONNECTION
             is RepositoryError.NothingFound -> FeedError.NOTHING_FOUND
@@ -79,7 +79,7 @@ class FeedViewModel @Inject constructor(router: Router, private val imageInterac
             val multiplier = image.width / screenWidth + 1
 
             val imageWidth = screenWidth
-            val imageHeight = (image.height / multiplier) + (screenWidth - imageWidth)
+            val imageHeight = image.height / multiplier
 
             FeedItem(image.id,
                     image.description ?: "",
