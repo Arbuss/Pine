@@ -7,10 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.RecyclerView
 import com.rosberry.pine.databinding.FragmentFeedBinding
 import com.rosberry.pine.ui.base.ObservableBaseFragment
 import com.rosberry.pine.util.Resource
@@ -30,8 +32,11 @@ class FeedFragment : ObservableBaseFragment<FragmentFeedBinding>() {
         super.onCreateView(inflater, container, savedInstanceState)
 
         binding?.feedList?.adapter = FeedAdapter()
+        binding?.feedList?.itemAnimator = null
 
         viewModel.init(getScreenWidth())
+
+        setupListenerPostListScroll()
 
         return binding?.root
     }
@@ -43,6 +48,8 @@ class FeedFragment : ObservableBaseFragment<FragmentFeedBinding>() {
                     when (uiState) {
                         is Resource.Success -> {
                             (binding?.feedList?.adapter as? FeedAdapter)?.addItems(uiState.item)
+                            Toast.makeText(context, "Items added", Toast.LENGTH_SHORT)
+                                .show()
                         }
                         is Resource.Error -> {
                         }
@@ -63,5 +70,25 @@ class FeedFragment : ObservableBaseFragment<FragmentFeedBinding>() {
             requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
             displayMetrics.widthPixels
         }
+    }
+
+    private fun setupListenerPostListScroll() {
+        val scrollDirectionDown = 1 // Scroll down is +1, up is -1.
+
+        binding?.feedList?.addOnScrollListener(
+                object : RecyclerView.OnScrollListener() {
+
+                    override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                        super.onScrollStateChanged(recyclerView, newState)
+
+                        if (!recyclerView.canScrollVertically(scrollDirectionDown)
+                                && newState == RecyclerView.SCROLL_STATE_IDLE
+                        ) {
+                            Toast.makeText(context, "End", Toast.LENGTH_SHORT)
+                                .show()
+                            viewModel.loadNewPage()
+                        }
+                    }
+                })
     }
 }

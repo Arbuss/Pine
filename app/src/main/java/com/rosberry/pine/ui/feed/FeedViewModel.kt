@@ -23,27 +23,58 @@ class FeedViewModel @Inject constructor(router: Router, private val imageInterac
     private val _newPage = MutableStateFlow(Resource.Success(listOf<FeedItem>()))
     val newPage: StateFlow<Resource<List<FeedItem>>> = _newPage
 
+    private var isLoading = false
+    private var screenWidth = 1
+
+    var currentPage: Int = 1
+        private set
+
     fun init(screenWidth: Int) {
+        this.screenWidth = screenWidth
+        loadNewPage()
+    }
+
+    fun loadNewPage() {
+        if (!isLoading) {
+            getPage()
+            isLoading = true
+        }
+    }
+
+    private fun getPage() {
         viewModelScope.launch(Dispatchers.IO) {
-            val newPhotos = imageInteractor.getPage(1, 10)
+            val newPhotos = imageInteractor.getPage(currentPage + 1, 10)
             photos.addAll(photos)
+            responseResultHandling(newPhotos)
+        }
+    }
 
-            if (newPhotos is Resource.Success) {
-                _newPage.value = Resource.Success(newPhotos.item.map { image: Image ->
-                    val multiplier = image.width / screenWidth + 1
-
-                    val imageWidth = screenWidth
-                    val imageHeight = (image.height / multiplier) + (screenWidth - imageWidth)
-
-                    FeedItem(image.id,
-                            image.description ?: "",
-                            image.urls.small,
-                            imageWidth,
-                            imageHeight,
-                            BlurHashDecoder.decode(image.blurHash, screenWidth, imageHeight),
-                            image.isLiked)
-                })
+    private suspend fun responseResultHandling(newPhotos: Resource<List<Image>>) {
+        when (newPhotos) {
+            is Resource.Success -> {
+                _newPage.value = Resource.Success(castInteractorItemsToViewItems(newPhotos.item))
+                currentPage++
+                isLoading = false
             }
+            is Resource.Error -> {
+            }
+        }
+    }
+
+    private suspend fun castInteractorItemsToViewItems(items: List<Image>): List<FeedItem> {
+        return items.map { image: Image ->
+            val multiplier = image.width / screenWidth + 1
+
+            val imageWidth = screenWidth
+            val imageHeight = (image.height / multiplier) + (screenWidth - imageWidth)
+
+            FeedItem(image.id,
+                    image.description ?: "",
+                    image.urls.small,
+                    imageWidth,
+                    imageHeight,
+                    BlurHashDecoder.decode(image.blurHash, screenWidth, imageHeight),
+                    image.isLiked)
         }
     }
 }

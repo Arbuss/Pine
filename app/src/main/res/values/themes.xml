@@ -33,6 +33,6 @@
         <item name="android:textSize">20sp</item>
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textStyle">normal</item>
-        <item name="android:letterSpacing">0.19</item>
+        <item name="android:letterSpacing">0.019</item>
     </style>
 </resources>
