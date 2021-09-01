@@ -3,6 +3,7 @@ package com.rosberry.pine.extension
 import android.util.DisplayMetrics
 import androidx.fragment.app.Fragment
 
+@Suppress("DEPRECATION")
 fun Fragment.getScreenWidth(): Int {
     return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
         val windowMetrics = requireActivity().windowManager.currentWindowMetrics

@@ -17,7 +17,7 @@
     <LinearLayout android:id="@+id/bottom_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/background_color_feed_item"
+        android:background="@color/main_1_38"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="@id/image"
         app:layout_constraintEnd_toEndOf="parent"
