@@ -6,8 +6,9 @@ import com.rosberry.pine.util.Resource
 import javax.inject.Inject
 
 class ImageRepository @Inject constructor(private val api: PhotosApi) {
+
     suspend fun getPage(page: Int, pageLength: Int): Resource<List<Image>> {
-        val response = api.getPage(page, pageLength).execute()
+        val response = api.getPage(page, pageLength)
 
         return Resource.Success(response.body()!!)
     }
