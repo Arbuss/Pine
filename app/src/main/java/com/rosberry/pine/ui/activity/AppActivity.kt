@@ -26,7 +26,7 @@ class AppActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAppBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        viewModel.openFirstScreen()
+        viewModel.showSplash()
     }
 
     override fun onResumeFragments() {

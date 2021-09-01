@@ -9,7 +9,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AppViewModel @Inject constructor(router: Router) : BaseViewModel(router) {
 
-    fun openFirstScreen() {
+    fun showSplash() {
         router.newRootScreen(Screens.Splash)
     }
 }

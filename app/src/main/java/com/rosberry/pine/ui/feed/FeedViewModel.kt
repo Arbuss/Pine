@@ -66,7 +66,7 @@ class FeedViewModel @Inject constructor(router: Router, private val imageInterac
             val multiplier = image.width / screenWidth + 1
 
             val imageWidth = screenWidth
-            val imageHeight = (image.height / multiplier) + (screenWidth - imageWidth)
+            val imageHeight = image.height / multiplier
 
             FeedItem(image.id,
                     image.description ?: "",

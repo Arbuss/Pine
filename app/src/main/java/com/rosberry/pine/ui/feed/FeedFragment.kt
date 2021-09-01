@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.rosberry.pine.databinding.FragmentFeedBinding
+import com.rosberry.pine.extension.getScreenWidth
 import com.rosberry.pine.ui.base.ObservableBaseFragment
 import com.rosberry.pine.util.Resource
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,6 +25,8 @@ import kotlinx.coroutines.launch
 class FeedFragment : ObservableBaseFragment<FragmentFeedBinding>() {
 
     private val viewModel: FeedViewModel by viewModels()
+    private val feedAdapter
+        get() = binding?.feedList?.adapter as? FeedAdapter
 
     override fun createViewBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentFeedBinding? =
             FragmentFeedBinding.inflate(inflater, container, false)
@@ -47,7 +50,7 @@ class FeedFragment : ObservableBaseFragment<FragmentFeedBinding>() {
                 viewModel.newPage.collect { uiState ->
                     when (uiState) {
                         is Resource.Success -> {
-                            (binding?.feedList?.adapter as? FeedAdapter)?.addItems(uiState.item)
+                            feedAdapter?.addItems(uiState.item)
                             Toast.makeText(context, "Items added", Toast.LENGTH_SHORT)
                                 .show()
                         }
@@ -56,19 +59,6 @@ class FeedFragment : ObservableBaseFragment<FragmentFeedBinding>() {
                     }
                 }
             }
-        }
-    }
-
-    private fun getScreenWidth(): Int {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val windowMetrics = requireActivity().windowManager.currentWindowMetrics
-            val insets = windowMetrics.windowInsets
-                .getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
-            windowMetrics.bounds.width() - insets.left - insets.right
-        } else {
-            val displayMetrics = DisplayMetrics()
-            requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
-            displayMetrics.widthPixels
         }
     }
 
