@@ -15,7 +15,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.rosberry.pine.databinding.FragmentFeedBinding
 import com.rosberry.pine.ui.base.ObservableBaseFragment
-import com.rosberry.pine.util.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -44,15 +43,18 @@ class FeedFragment : ObservableBaseFragment<FragmentFeedBinding>() {
     override fun setObservers() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.newPage.collect { uiState ->
-                    when (uiState) {
-                        is Resource.Success -> {
-                            (binding?.feedList?.adapter as? FeedAdapter)?.addItems(uiState.item)
-                            Toast.makeText(context, "Items added", Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                        is Resource.Error -> {
-                        }
+                viewModel.newPage.collect { newPage ->
+                    (binding?.feedList?.adapter as? FeedAdapter)?.addItems(newPage)
+                    Toast.makeText(context, "Items added", Toast.LENGTH_SHORT)
+                        .show()
+
+                }
+
+                viewModel.error.collect { error ->
+                    when(error) {
+                        FeedError.NO_CONNECTION -> {}
+                        FeedError.SERVER_ERROR -> {}
+                        FeedError.NOTHING_FOUND -> {}
                     }
                 }
             }
