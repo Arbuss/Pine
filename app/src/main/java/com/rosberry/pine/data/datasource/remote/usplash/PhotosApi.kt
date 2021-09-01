@@ -5,10 +5,10 @@ import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface UnsplashApi {
+interface PhotosApi {
 
     @GET("/photos")
-    fun getPage(
+    suspend fun getPage(
             @Query("page") page: Int,
             @Query("per_page") pageLength: Int
     ): Call<List<Image>>

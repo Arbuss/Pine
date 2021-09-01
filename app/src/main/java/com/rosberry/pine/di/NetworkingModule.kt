@@ -1,7 +1,7 @@
 package com.rosberry.pine.di
 
 import com.rosberry.pine.BuildConfig
-import com.rosberry.pine.data.datasource.remote.usplash.UnsplashApi
+import com.rosberry.pine.data.datasource.remote.usplash.PhotosApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,5 +44,5 @@ object NetworkingModule {
 
     @Provides
     @Singleton
-    fun provideUnsplashApi(retrofit: Retrofit): UnsplashApi = retrofit.create(UnsplashApi::class.java)
+    fun providePhotosApi(retrofit: Retrofit): PhotosApi = retrofit.create(PhotosApi::class.java)
 }

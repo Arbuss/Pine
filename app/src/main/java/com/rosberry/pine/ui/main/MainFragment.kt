@@ -50,7 +50,7 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
 
     private fun initTabs() {
         TabLayoutMediator(binding!!.tabs, binding!!.viewPager) { tab, position ->
-            tab.text = requireContext().resources.getStringArray(R.array.main_fragment_view_pager_tabs)
+            tab.text = resources.getStringArray(R.array.main_fragment_view_pager_tabs)
                 .getOrElse(position) { "" }
         }.attach()
     }
