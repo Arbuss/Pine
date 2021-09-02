@@ -2,7 +2,6 @@ package com.rosberry.pine.ui.feed
 
 import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
-import com.rosberry.pine.data.repository.RepositoryError
 import com.rosberry.pine.data.repository.model.Image
 import com.rosberry.pine.domain.ImageInteractor
 import com.rosberry.pine.ui.base.BaseViewModel
@@ -24,7 +23,7 @@ class FeedViewModel @Inject constructor(router: Router, private val imageInterac
     private val _newPage = MutableStateFlow(listOf<FeedItem>())
     val newPage: StateFlow<List<FeedItem>> = _newPage
 
-    private val _error = MutableStateFlow(FeedError.NO_ERROR)
+    private val _error = MutableStateFlow<FeedError>(FeedError.NoError())
     val error = _error
 
     private var isLoading = false
@@ -60,17 +59,8 @@ class FeedViewModel @Inject constructor(router: Router, private val imageInterac
                 isLoading = false
             }
             is Resource.Error -> {
-                errorHandling(resource.exception)
+                _error.value = resource.exception as FeedError
             }
-        }
-    }
-
-    private fun errorHandling(exception: Throwable) {
-        _error.value = when (exception) {
-            is RepositoryError.ServerError -> FeedError.SERVER_ERROR
-            is RepositoryError.NoConnectionError -> FeedError.NO_CONNECTION
-            is RepositoryError.NothingFound -> FeedError.NOTHING_FOUND
-            else -> FeedError.NO_ERROR
         }
     }
 

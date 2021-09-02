@@ -53,9 +53,9 @@ class FeedFragment : ObservableBaseFragment<FragmentFeedBinding>() {
 
                 viewModel.error.collect { error ->
                     when(error) {
-                        FeedError.NO_CONNECTION -> {}
-                        FeedError.SERVER_ERROR -> {}
-                        FeedError.NOTHING_FOUND -> {}
+                        is FeedError.NoConnection -> {}
+                        is FeedError.ServerError -> {}
+                        is FeedError.NothingFound -> {}
                     }
                 }
             }

@@ -11,8 +11,8 @@ interface PhotosApi {
         const val BAD_REQUEST = 200
         const val UNAUTHORIZED = 401
         const val NOT_FOUND = 404
-        const val SERVER_ERROR_1 = 500
-        const val SERVER_ERROR_2 = 503
+        const val SERVER_ERROR_500 = 500
+        const val SERVER_ERROR_503 = 503
     }
 
     @GET("/photos")

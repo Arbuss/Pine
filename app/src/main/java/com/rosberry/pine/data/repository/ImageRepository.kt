@@ -9,11 +9,15 @@ class ImageRepository @Inject constructor(private val api: PhotosApi) {
     suspend fun getPage(page: Int, pageLength: Int): List<Image> {
         val response = api.getPage(page, pageLength)
 
+        if (!response.isSuccessful) {
+            throw errorHandling(response.code())
+        }
+
         return response.body()!!
     }
 
     private fun errorHandling(errorCode: Int) = when (errorCode) {
-        PhotosApi.SERVER_ERROR_1, PhotosApi.SERVER_ERROR_2 -> {
+        PhotosApi.SERVER_ERROR_500, PhotosApi.SERVER_ERROR_503 -> {
             RepositoryError.ServerError()
         }
         PhotosApi.NOT_FOUND -> {
