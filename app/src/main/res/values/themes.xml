@@ -2,15 +2,15 @@
     <!-- Base application theme. -->
     <style name="Theme.Pine" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/background_color</item>
-        <item name="colorPrimaryVariant">@color/background_color</item>
-        <item name="colorOnPrimary">@android:color/black</item>
+        <item name="colorPrimary">@color/main_1_100</item>
+        <item name="colorPrimaryVariant">@color/main_1_60</item>
+        <item name="colorOnPrimary">@color/main_1_100</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/background_color</item>
-        <item name="colorSecondaryVariant">@color/background_color</item>
-        <item name="colorOnSecondary">@android:color/black</item>
+        <item name="colorSecondary">@color/main_1_100</item>
+        <item name="colorSecondaryVariant">@color/main_1_60</item>
+        <item name="colorOnSecondary">@color/main_1_100</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimary</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/background_color</item>
         <!-- Customize your theme here. -->
         <item name="android:windowBackground">@color/background_color</item>
     </style>

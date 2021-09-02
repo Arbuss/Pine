@@ -15,4 +15,5 @@
     <color name="additional_3_100">#121212</color>
 
     <color name="background_color">#ededed</color>
+    <color name="app_title_color">@color/main_1_100</color>
 </resources>
