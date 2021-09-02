@@ -7,10 +7,6 @@ import com.rosberry.pine.R
 import com.rosberry.pine.databinding.ItemFeedBinding
 import com.rosberry.pine.ui.base.BaseAdapter
 import com.squareup.picasso.Picasso
-import xyz.belvi.blurhash.BlurHash
-import xyz.belvi.blurhash.BlurHashDecoder
-import xyz.belvi.blurhash.blurHashDrawable
-import xyz.belvi.blurhash.blurPlaceHolder
 
 class FeedAdapter : BaseAdapter<FeedItem, ItemFeedBinding>(mutableListOf()) {
 
@@ -47,5 +43,18 @@ class FeedAdapter : BaseAdapter<FeedItem, ItemFeedBinding>(mutableListOf()) {
                 .centerCrop()
                 .into(binding.image)
         }
+    }
+
+    override fun createDiffUtilCallback(newList: List<FeedItem>) = ImageDiffUtilCallback(newList)
+
+    inner class ImageDiffUtilCallback(newList: List<FeedItem>) :
+            BaseDiffUtilCallback<FeedItem>(newList) {
+
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) = items[oldItemPosition].id ==
+                newList[newItemPosition].id
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+                items[oldItemPosition].isLiked == newList[newItemPosition].isLiked
+
     }
 }
