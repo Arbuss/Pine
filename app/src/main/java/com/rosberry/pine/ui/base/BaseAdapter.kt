@@ -18,10 +18,11 @@ abstract class BaseAdapter<T : BaseAdapterItem,
     override fun getItemCount() = items.size
 
     fun addItems(newItems: List<T>) {
-        val diffUtilCallback = createDiffUtilCallback(newItems)
+        val diffUtilCallback = createDiffUtilCallback(items + newItems)
         val diffResult = DiffUtil.calculateDiff(diffUtilCallback)
+        val oldItems = items.toList()
         items.clear()
-        items.addAll(newItems)
+        items.addAll(oldItems + newItems)
         diffResult.dispatchUpdatesTo(this)
     }
 

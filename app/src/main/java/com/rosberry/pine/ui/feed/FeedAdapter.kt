@@ -50,8 +50,8 @@ class FeedAdapter : BaseAdapter<FeedItem, ItemFeedBinding>(mutableListOf()) {
     inner class ImageDiffUtilCallback(newList: List<FeedItem>) :
             BaseDiffUtilCallback<FeedItem>(newList) {
 
-        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) = items[oldItemPosition].id ==
-                newList[newItemPosition].id
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+                items[oldItemPosition].id == newList[newItemPosition].id
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
                 items[oldItemPosition].isLiked == newList[newItemPosition].isLiked

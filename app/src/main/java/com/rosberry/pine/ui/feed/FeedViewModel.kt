@@ -1,18 +1,24 @@
 package com.rosberry.pine.ui.feed
 
+import android.graphics.Bitmap
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
 import com.rosberry.pine.data.repository.model.Image
 import com.rosberry.pine.domain.ImageInteractor
 import com.rosberry.pine.ui.base.BaseViewModel
+import com.rosberry.pine.util.BlurHashDecoder
 import com.rosberry.pine.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import xyz.belvi.blurhash.BlurHashDecoder
 import javax.inject.Inject
+import android.graphics.BitmapFactory
+
+
+
 
 @HiltViewModel
 class FeedViewModel @Inject constructor(router: Router, private val imageInteractor: ImageInteractor) :
@@ -25,6 +31,8 @@ class FeedViewModel @Inject constructor(router: Router, private val imageInterac
 
     private var isLoading = false
     private var screenWidth = 1
+
+    private var picCount = 0
 
     var currentPage: Int = 1
         private set
@@ -52,7 +60,9 @@ class FeedViewModel @Inject constructor(router: Router, private val imageInterac
     private suspend fun responseResultHandling(newPhotos: Resource<List<Image>>) {
         when (newPhotos) {
             is Resource.Success -> {
-                _newPage.value = Resource.Success(castInteractorItemsToViewItems(newPhotos.item))
+                newPhotos.item.forEach {
+                    addItem(it)
+                }
                 currentPage++
                 isLoading = false
             }
@@ -61,20 +71,28 @@ class FeedViewModel @Inject constructor(router: Router, private val imageInterac
         }
     }
 
-    private suspend fun castInteractorItemsToViewItems(items: List<Image>): List<FeedItem> {
-        return items.map { image: Image ->
-            val multiplier = image.width / screenWidth + 1
+    private suspend fun addItem(image: Image) {
+        val (imageWidth, imageHeight) = calcImageSize(image.width, image.height)
 
-            val imageWidth = screenWidth
-            val imageHeight = image.height / multiplier
+        val blurHash = BlurHashDecoder.decode(image.blurHash, screenWidth, imageHeight, bitmapConfig = Bitmap.Config.RGB_565)
 
-            FeedItem(image.id,
-                    image.description ?: "",
-                    image.urls.small,
-                    imageWidth,
-                    imageHeight,
-                    BlurHashDecoder.decode(image.blurHash, screenWidth, imageHeight),
-                    image.isLiked)
-        }
+        val item = FeedItem(image.id,
+                image.description ?: "",
+                image.urls.small,
+                imageWidth,
+                imageHeight,
+                blurHash,
+                image.isLiked)
+        Log.d("ItemCount", "count = ${++picCount}")
+
+        _newPage.value = Resource.Success(listOf(item))
+    }
+
+    private fun calcImageSize(width: Int, height: Int): Pair<Int, Int> {
+        val multiplier = width / screenWidth + 1
+
+        val imageWidth = screenWidth
+        val imageHeight = height / multiplier
+        return imageWidth to imageHeight
     }
 }
