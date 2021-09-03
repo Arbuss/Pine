@@ -32,9 +32,8 @@ class FeedFragment : ObservableBaseFragment<FragmentFeedBinding>() {
         super.onCreateView(inflater, container, savedInstanceState)
 
         binding?.feedList?.adapter = FeedAdapter()
-        binding?.feedList?.itemAnimator = null
 
-        viewModel.init(getScreenWidth())
+        viewModel.init(getScreenWidth(), context?.cacheDir)
 
         setupListenerPostListScroll()
 
