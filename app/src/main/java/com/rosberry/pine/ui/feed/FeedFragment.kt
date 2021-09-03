@@ -62,6 +62,8 @@ class FeedFragment : ObservableBaseFragment<FragmentFeedBinding>() {
                                     getString(R.string.error_no_connection_body))
                         }
                         is FeedError.ServerError -> {
+                            showError(getString(R.string.error_server_title),
+                                    getString(R.string.error_server_body))
                         }
                         is FeedError.NothingFound -> {
                         }

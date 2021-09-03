@@ -16,4 +16,6 @@
     <!-- Errors -->
     <string name="error_no_connection_title">No connection</string>
     <string name="error_no_connection_body">Check connection and try again</string>
+    <string name="error_server_title">Server Error</string>
+    <string name="error_server_body">Placeholder text for server error body</string>
 </resources>
