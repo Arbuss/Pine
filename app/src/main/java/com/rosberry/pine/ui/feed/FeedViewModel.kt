@@ -34,8 +34,6 @@ class FeedViewModel @Inject constructor(router: Router, private val imageInterac
     private var screenWidth = 1
     private var cacheDir: File? = null
 
-    private var picCount = 0
-
     var currentPage: Int = 1
         private set
 
@@ -63,6 +61,7 @@ class FeedViewModel @Inject constructor(router: Router, private val imageInterac
     private suspend fun responseResultHandling(resource: Resource<List<Image>>) {
         when (resource) {
             is Resource.Success -> {
+                error.value = FeedError.NoError()
                 resource.item.forEach {
                     addItem(it)
                 }

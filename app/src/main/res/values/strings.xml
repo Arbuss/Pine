@@ -12,4 +12,8 @@
     <string name="view_top_bar_content_description_app_logo">Application Logo</string>
     <string name="view_top_bar_content_description_search_button">Search Button</string>
     <string name="view_top_bar_content_description_profile_button">Profile Button</string>
+
+    <!-- Errors -->
+    <string name="error_no_connection_title">No connection</string>
+    <string name="error_no_connection_body">Check connection and try again</string>
 </resources>
