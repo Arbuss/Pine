@@ -54,9 +54,6 @@ class FeedAdapter : BaseAdapter<FeedItem, ItemFeedBinding>(mutableListOf()) {
         private fun setImage(item: FeedItem, placeholder: Drawable?) {
             val picasso = Picasso.get()
 
-            picasso.setIndicatorsEnabled(true)
-            picasso.isLoggingEnabled = true
-
             val requestCreator = picasso.load(item.url)
 
             if (placeholder == null) {
