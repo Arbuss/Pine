@@ -1,12 +1,9 @@
 package com.rosberry.pine.ui.feed
 
-import android.os.Build
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowInsets
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -36,7 +33,7 @@ class FeedFragment : ObservableBaseFragment<FragmentFeedBinding>() {
 
         binding?.feedList?.adapter = FeedAdapter()
 
-        viewModel.init(getScreenWidth())
+        viewModel.init(getScreenWidth(), context?.cacheDir)
 
         setupListenerPostListScroll()
 

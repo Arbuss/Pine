@@ -9,7 +9,7 @@ import androidx.viewbinding.ViewBinding
 
 abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
-    protected var binding: VB? = null
+    protected var binding: VB? = null // TODO попробовать создавать его тут
 
     abstract fun createViewBinding(
             inflater: LayoutInflater,
@@ -22,6 +22,7 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
             savedInstanceState: Bundle?
     ): View? {
         binding = createViewBinding(inflater, container)
+
         return binding?.root
     }
 

@@ -80,4 +80,7 @@ dependencies {
 
     // Annotation processor https://developer.android.com/jetpack/androidx/releases/lifecycle
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
+
+    // AutoDisposable coroutines https://github.com/satoshun/CoroutineAutoDispose
+    implementation "com.github.satoshun.coroutine.autodispose:autodispose:0.3.1"
 }

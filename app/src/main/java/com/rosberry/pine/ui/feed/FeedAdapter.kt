@@ -1,12 +1,19 @@
 package com.rosberry.pine.ui.feed
 
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.updateLayoutParams
+import com.github.satoshun.coroutine.autodispose.view.autoDisposeScope
 import com.rosberry.pine.R
 import com.rosberry.pine.databinding.ItemFeedBinding
 import com.rosberry.pine.ui.base.BaseAdapter
+import com.rosberry.pine.util.FileUtil
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FeedAdapter : BaseAdapter<FeedItem, ItemFeedBinding>(mutableListOf()) {
 
@@ -31,14 +38,34 @@ class FeedAdapter : BaseAdapter<FeedItem, ItemFeedBinding>(mutableListOf()) {
                 width = item.width
                 height = item.height
 
-                item.blurHash?.let {
-                    binding.image.setImageBitmap(it)
+                item.blurHashUri?.let {
+                    binding.root.autoDisposeScope.launch(Dispatchers.IO) {
+                        val bitmapDrawable = BitmapDrawable(binding.root.resources, FileUtil.readBitmap(it))
+                        withContext(Dispatchers.Main) {
+                            setImage(item, bitmapDrawable)
+                        }
+                    }
+                } ?: run {
+                    setImage(item, null)
                 }
             }
+        }
 
-            Picasso.get()
-                .load(item.url)
-                .noPlaceholder()
+        private fun setImage(item: FeedItem, placeholder: Drawable?) {
+            val picasso = Picasso.get()
+
+            picasso.setIndicatorsEnabled(true)
+            picasso.isLoggingEnabled = true
+
+            val requestCreator = picasso.load(item.url)
+
+            if (placeholder == null) {
+                requestCreator.noPlaceholder()
+            } else {
+                requestCreator.placeholder(placeholder)
+            }
+
+            requestCreator
                 .resize(item.width, item.height)
                 .centerCrop()
                 .into(binding.image)

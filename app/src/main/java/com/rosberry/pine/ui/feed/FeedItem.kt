@@ -1,6 +1,5 @@
 package com.rosberry.pine.ui.feed
 
-import android.graphics.Bitmap
 import com.rosberry.pine.ui.base.BaseAdapterItem
 
 data class FeedItem(
@@ -9,6 +8,6 @@ data class FeedItem(
         val url: String,
         val width: Int,
         val height: Int,
-        val blurHash: Bitmap?,
+        val blurHashUri: String?,
         val isLiked: Boolean
-): BaseAdapterItem
+) : BaseAdapterItem
