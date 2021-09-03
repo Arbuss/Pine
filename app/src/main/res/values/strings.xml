@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">Pine</string>
+
+    <!-- Main Screen -->
+    <string name="main_fragment_app_bar_title">Pine</string>
+    <string-array name="main_fragment_view_pager_tabs">
+        <item>Feed</item>
+        <item>Favorite</item>
+    </string-array>
+
+    <!-- Top Bar -->
+    <string name="view_top_bar_content_description_app_logo">Application Logo</string>
+    <string name="view_top_bar_content_description_search_button">Search Button</string>
+    <string name="view_top_bar_content_description_profile_button">Profile Button</string>
 </resources>

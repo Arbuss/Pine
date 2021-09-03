@@ -19,6 +19,10 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "BASE_URL", "\"https://api.unsplash.com/\"")
+            buildConfigField("String", "API_KEY", "\"MZj_nI7c9DxfTHwFCQLk5_VO4aiKCepfHEQR2Fbtg4o\"")
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -51,6 +55,7 @@ dependencies {
 
     // Retrofit https://github.com/square/retrofit
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
 
     // Room https://developer.android.com/jetpack/androidx/releases/room
     implementation "androidx.room:room-runtime:$roomVersion"
@@ -75,4 +80,7 @@ dependencies {
 
     // Annotation processor https://developer.android.com/jetpack/androidx/releases/lifecycle
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
+
+    // BlurHash https://github.com/KingsMentor/BlurHashExt
+    implementation 'xyz.belvi.blurHash:blurHash:1.0.4'
 }

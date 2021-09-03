@@ -13,18 +13,19 @@ import com.rosberry.pine.ui.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SplashFragment : BaseFragment() {
-
-    var binding: FragmentSplashBinding? = null
+class SplashFragment : BaseFragment<FragmentSplashBinding>() {
 
     private val viewModel: SplashViewModel by viewModels()
+
+    override fun createViewBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSplashBinding? =
+            FragmentSplashBinding.inflate(inflater, container, false)
 
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentSplashBinding.inflate(inflater, container, false)
+        super.onCreateView(inflater, container, savedInstanceState)
         backgroundPositioning()
         return binding?.root
     }
