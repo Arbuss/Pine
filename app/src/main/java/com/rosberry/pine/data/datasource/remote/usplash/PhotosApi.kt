@@ -20,4 +20,11 @@ interface PhotosApi {
             @Query("page") page: Int,
             @Query("per_page") pageLength: Int
     ): Response<List<Image>>
+
+    @GET("/photos")
+    suspend fun searchPage(
+            @Query("query") query: String,
+            @Query("page") page: Int,
+            @Query("per_page") pageLength: Int
+    ): Response<List<Image>>
 }
