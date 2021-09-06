@@ -13,6 +13,11 @@
     <string name="view_top_bar_content_description_search_button">Search Button</string>
     <string name="view_top_bar_content_description_profile_button">Profile Button</string>
 
+    <!-- Search -->
+    <string name="search_fragment_hint">Search</string>
+    <string name="search_fragment_content_description_back_button">Back Button</string>
+    <string name="search_fragment_content_description_clear_button">Clear Button</string>
+
     <!-- Errors -->
     <string name="error_no_connection_title">No connection</string>
     <string name="error_no_connection_body">Check connection and try again</string>

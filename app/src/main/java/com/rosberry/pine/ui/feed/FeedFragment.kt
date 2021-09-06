@@ -44,7 +44,7 @@ class FeedFragment : ObservableBaseFragment<FragmentFeedBinding>() {
 
     override fun setObservers() {
         lifecycleScope.launch(Dispatchers.Main) {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+            repeatOnLifecycle(Lifecycle.State.STARTED) { // TODO корутины будут создаваться много раз
                 viewModel.newPage.collect { newPage ->
                     feedAdapter?.addItems(newPage)
                     Toast.makeText(context, "Items added", Toast.LENGTH_SHORT)
@@ -98,7 +98,7 @@ class FeedFragment : ObservableBaseFragment<FragmentFeedBinding>() {
                     override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                         super.onScrollStateChanged(recyclerView, newState)
 
-                        if (!recyclerView.canScrollVertically(scrollDirectionDown)
+                        if (!recyclerView.canScrollVertically(scrollDirectionDown) // TODO смотреть на позицию элемента и отправлять новый запрос за 4 элемента до конца
                                 && newState == RecyclerView.SCROLL_STATE_IDLE
                         ) {
                             Toast.makeText(context, "End", Toast.LENGTH_SHORT)

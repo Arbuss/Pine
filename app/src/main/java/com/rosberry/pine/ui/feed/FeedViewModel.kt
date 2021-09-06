@@ -52,7 +52,7 @@ class FeedViewModel @Inject constructor(router: Router, private val imageInterac
 
     private fun getPage() {
         viewModelScope.launch(Dispatchers.IO) {
-            val newPhotos = imageInteractor.getPage(currentPage + 1, 60)
+            val newPhotos = imageInteractor.getPage(currentPage + 1, 10)
             photos.addAll(photos)
             responseResultHandling(newPhotos)
         }
@@ -63,7 +63,7 @@ class FeedViewModel @Inject constructor(router: Router, private val imageInterac
             is Resource.Success -> {
                 error.value = FeedError.NoError()
                 resource.item.forEach {
-                    addItem(it)
+                    addItem(it) // TODO показывать постранично
                 }
                 currentPage++
                 isLoading = false
