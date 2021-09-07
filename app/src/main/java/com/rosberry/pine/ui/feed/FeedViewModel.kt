@@ -29,6 +29,9 @@ class FeedViewModel @Inject constructor(router: Router, private val imageInterac
     private val _error = MutableStateFlow<FeedError>(FeedError.NoError())
     val error = _error
 
+    private val _showLoading = MutableStateFlow(false)
+    val showLoading = _showLoading
+
     private var isLoading = false
 
     private var screenWidth = 1
@@ -47,6 +50,7 @@ class FeedViewModel @Inject constructor(router: Router, private val imageInterac
         if (!isLoading) {
             getPage()
             isLoading = true
+            _showLoading.value = isLoading
         }
     }
 
@@ -61,12 +65,14 @@ class FeedViewModel @Inject constructor(router: Router, private val imageInterac
     private suspend fun responseResultHandling(resource: Resource<List<Image>>) {
         when (resource) {
             is Resource.Success -> {
-                error.value = FeedError.NoError()
-                resource.item.forEach {
-                    addItem(it) // TODO показывать постранично
+                viewModelScope.launch(Dispatchers.IO) {
+                    _newPage.value = resource.item.map { castImageToAdapterItem(it) }
+                        .toMutableList()
+                    currentPage++
+                    isLoading = false
+                    _showLoading.value = isLoading
                 }
-                currentPage++
-                isLoading = false
+                error.value = FeedError.NoError()
             }
             is Resource.Error -> {
                 _error.value = resource.exception as FeedError
@@ -74,7 +80,7 @@ class FeedViewModel @Inject constructor(router: Router, private val imageInterac
         }
     }
 
-    private suspend fun addItem(image: Image) {
+    private suspend fun castImageToAdapterItem(image: Image): ImageItem {
         val (imageWidth, imageHeight) = calcImageSize(image.width, image.height)
 
         val blurHash = BlurHashDecoder.decode(image.blurHash, screenWidth, imageHeight,
@@ -86,15 +92,13 @@ class FeedViewModel @Inject constructor(router: Router, private val imageInterac
             blurHashUri = FileUtil.writeBitmap(cacheDir!!, image.id, blurHash)
         }
 
-        val item = ImageItem(image.id,
+        return ImageItem(image.id,
                 image.description ?: "",
                 image.urls.small,
                 imageWidth,
                 imageHeight,
                 blurHashUri,
                 image.isLiked)
-
-        _newPage.value = listOf(item)
     }
 
     private fun calcImageSize(width: Int, height: Int): Pair<Int, Int> {

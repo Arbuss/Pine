@@ -1,7 +1,6 @@
 package com.rosberry.pine.ui.search
 
 import android.os.Bundle
-import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -35,37 +34,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycleScope.launch(Dispatchers.Main) {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.newPage.collect {
-                    Log.d("###SEARCH", "collected page")
-                    imageAdapter?.addItems(it)
-                    binding?.searchList?.isVisible = false
-                }
-            }
-        }
-
-        lifecycleScope.launch(Dispatchers.Main) {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.showLoading.collect { isLoading ->
-                    Log.d("###SEARCH", "collected $isLoading")
-                    if (isLoading) {
-                        imageAdapter?.startProgressBar()
-                    } else {
-                        imageAdapter?.stopProgressBar()
-                    }
-                }
-            }
-        }
-
-        lifecycleScope.launch(Dispatchers.Main) {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.clearImageListEvent.collect { isLoading ->
-                    Log.d("###SEARCH", "clear")
-                    imageAdapter?.clear()
-                }
-            }
-        }
+        setObservers()
     }
 
     override fun createViewBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSearchBinding? =
@@ -118,12 +87,41 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
                 val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                 val lastVisiblePosition = layoutManager.findLastVisibleItemPosition()
                 val adapterItemsCount = imageAdapter?.itemCount ?: 0
-                Log.d("###SEARCH", "lastVisiblePosition = $lastVisiblePosition, adapterItemsCount = $adapterItemsCount")
                 if (lastVisiblePosition + 4 >= adapterItemsCount) {
-                    Log.d("###SEARCH", "start loading")
                     viewModel.loadNewPage()
                 }
             }
         })
+    }
+
+    private fun setObservers() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.newPage.collect {
+                    imageAdapter?.addItems(it)
+                    binding?.searchList?.isVisible = false
+                }
+            }
+        }
+
+        lifecycleScope.launch(Dispatchers.Main) {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.showLoading.collect { isLoading ->
+                    if (isLoading) {
+                        imageAdapter?.startProgressBar()
+                    } else {
+                        imageAdapter?.stopProgressBar()
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch(Dispatchers.Main) {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.clearImageListEvent.collect { isLoading ->
+                    imageAdapter?.clear()
+                }
+            }
+        }
     }
 }

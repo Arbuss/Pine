@@ -52,9 +52,6 @@ class SearchViewModel @Inject constructor(router: Router, private val searchInte
 
     fun search(query: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            Log.d("###SEARCH", query)
-
-            Log.d("###SEARCH", "query = $query, lastQuery = $lastQuery, currentPage = $currentPage")
             if (lastQuery?.equals(query) == false) {
                 currentPage = 0
                 _clearImageListEvent.value = !_clearImageListEvent.value
@@ -95,7 +92,6 @@ class SearchViewModel @Inject constructor(router: Router, private val searchInte
             blurHashUri = FileUtil.writeBitmap(cacheDir!!, image.id, blurHash)
         }
 
-        Log.d("###SEARCH", "image ${image.id}")
         return ImageItem(image.id,
                 image.description ?: "",
                 image.urls.small,
