@@ -25,7 +25,7 @@ class FeedFragment : ObservableBaseFragment<FragmentFeedBinding>() {
 
     private val viewModel: FeedViewModel by viewModels()
     private val feedAdapter
-        get() = binding?.feedList?.adapter as? FeedAdapter
+        get() = binding?.feedList?.adapter as? ImageAdapter
 
     override fun createViewBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentFeedBinding? =
             FragmentFeedBinding.inflate(inflater, container, false)
@@ -33,7 +33,7 @@ class FeedFragment : ObservableBaseFragment<FragmentFeedBinding>() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
 
-        binding?.feedList?.adapter = FeedAdapter()
+        binding?.feedList?.adapter = ImageAdapter()
 
         viewModel.init(getScreenWidth(), context?.cacheDir)
 

@@ -1,6 +1,7 @@
-package com.rosberry.pine.data.datasource.remote.usplash
+package com.rosberry.pine.data.datasource.remote.unsplash
 
 import com.rosberry.pine.data.repository.model.Image
+import com.rosberry.pine.data.repository.model.SearchedImages
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -21,10 +22,10 @@ interface PhotosApi {
             @Query("per_page") pageLength: Int
     ): Response<List<Image>>
 
-    @GET("/photos")
+    @GET("/search/photos")
     suspend fun searchPage(
             @Query("query") query: String,
             @Query("page") page: Int,
             @Query("per_page") pageLength: Int
-    ): Response<List<Image>>
+    ): Response<SearchedImages>
 }

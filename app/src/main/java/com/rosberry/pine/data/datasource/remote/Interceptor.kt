@@ -1,11 +1,12 @@
-package com.rosberry.pine.util
+package com.rosberry.pine.data.datasource.remote
 
 import com.rosberry.pine.BuildConfig
 import okhttp3.Interceptor
+import okhttp3.Response
 
 class Interceptor : Interceptor {
- // TODO переместить в remote
-    override fun intercept(chain: Interceptor.Chain) = chain.run {
+
+    override fun intercept(chain: Interceptor.Chain): Response = chain.run {
         proceed(
                 request()
                     .newBuilder()

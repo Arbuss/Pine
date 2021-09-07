@@ -23,8 +23,8 @@ class FeedViewModel @Inject constructor(router: Router, private val imageInterac
 
     private val photos = mutableListOf<Image>()
 
-    private val _newPage = MutableStateFlow(listOf<FeedItem>())
-    val newPage: StateFlow<List<FeedItem>> = _newPage
+    private val _newPage = MutableStateFlow(listOf<ImageItem>())
+    val newPage: StateFlow<List<ImageItem>> = _newPage
 
     private val _error = MutableStateFlow<FeedError>(FeedError.NoError())
     val error = _error
@@ -86,7 +86,7 @@ class FeedViewModel @Inject constructor(router: Router, private val imageInterac
             blurHashUri = FileUtil.writeBitmap(cacheDir!!, image.id, blurHash)
         }
 
-        val item = FeedItem(image.id,
+        val item = ImageItem(image.id,
                 image.description ?: "",
                 image.urls.small,
                 imageWidth,

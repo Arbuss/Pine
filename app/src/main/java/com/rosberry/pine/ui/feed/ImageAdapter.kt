@@ -15,17 +15,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class FeedAdapter : BaseAdapter<FeedItem, ItemFeedBinding>(mutableListOf()) {
+class ImageAdapter : BaseAdapter<ImageItem, ItemFeedBinding>(mutableListOf()) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<FeedItem, ItemFeedBinding> {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<ImageItem, ItemFeedBinding> {
         return ImageViewHolder(
                 ItemFeedBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 
-    inner class ImageViewHolder(binding: ItemFeedBinding) : BaseViewHolder<FeedItem, ItemFeedBinding>(binding) {
+    inner class ImageViewHolder(binding: ItemFeedBinding) : BaseViewHolder<ImageItem, ItemFeedBinding>(binding) {
 
-        override fun bind(item: FeedItem) {
+        override fun bind(item: ImageItem) {
             binding.description.text = item.description
 
             if (item.isLiked) {
@@ -51,7 +51,7 @@ class FeedAdapter : BaseAdapter<FeedItem, ItemFeedBinding>(mutableListOf()) {
             }
         }
 
-        private fun setImage(item: FeedItem, placeholder: Drawable?) {
+        private fun setImage(item: ImageItem, placeholder: Drawable?) {
             val picasso = Picasso.get()
 
             val requestCreator = picasso.load(item.url)
@@ -69,10 +69,10 @@ class FeedAdapter : BaseAdapter<FeedItem, ItemFeedBinding>(mutableListOf()) {
         }
     }
 
-    override fun createDiffUtilCallback(newList: List<FeedItem>) = ImageDiffUtilCallback(newList)
+    override fun createDiffUtilCallback(newList: List<ImageItem>) = ImageDiffUtilCallback(newList)
 
-    inner class ImageDiffUtilCallback(newList: List<FeedItem>) :
-            BaseDiffUtilCallback<FeedItem>(newList) {
+    inner class ImageDiffUtilCallback(newList: List<ImageItem>) :
+            BaseDiffUtilCallback<ImageItem>(newList) {
 
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
                 items[oldItemPosition].id == newList[newItemPosition].id
