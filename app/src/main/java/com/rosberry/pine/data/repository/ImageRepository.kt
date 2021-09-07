@@ -11,10 +11,8 @@ class ImageRepository @Inject constructor(private val api: PhotosApi) {
         return handleResponse(api.getPage(page, pageLength))
     }
 
-    suspend fun getSearchHistory(itemsCount: Int): List<String> {
-        return database.searchCacheDao()
-            .getNLastItems(itemsCount)
-            .map { it.query }
+    suspend fun searchPage(query: String, page: Int, pageSize: Int): List<Image> {
+        return handleResponse(api.searchPage(query, page, pageSize))
     }
 
     private fun <T> handleResponse(response: Response<List<T>>): List<T> {
