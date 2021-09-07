@@ -5,13 +5,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 
-abstract class BaseAdapter<T : BaseAdapterItem,
-        B : ViewBinding>(protected val items: MutableList<T>) :
-        RecyclerView.Adapter<BaseAdapter.BaseViewHolder<T, B>>() {
+abstract class BaseAdapter<T : BaseAdapterItem>(protected val items: MutableList<T>) :
+        RecyclerView.Adapter<BaseAdapter.BaseViewHolder<T>>() {
 
-    abstract override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<T, B>
+    abstract override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<T>
 
-    override fun onBindViewHolder(holder: BaseViewHolder<T, B>, position: Int) {
+    override fun onBindViewHolder(holder: BaseViewHolder<T>, position: Int) {
         holder.bind(items[position])
     }
 
@@ -28,8 +27,8 @@ abstract class BaseAdapter<T : BaseAdapterItem,
 
     abstract fun createDiffUtilCallback(newList: List<T>): BaseDiffUtilCallback<T>
 
-    abstract class BaseViewHolder<in T : BaseAdapterItem, B : ViewBinding>(val binding: B) :
-            RecyclerView.ViewHolder(binding.root) {
+    abstract class BaseViewHolder<in T : BaseAdapterItem>(val _binding: ViewBinding) :
+            RecyclerView.ViewHolder(_binding.root) {
 
         abstract fun bind(item: T)
     }

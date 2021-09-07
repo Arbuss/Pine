@@ -25,20 +25,44 @@ class SearchViewModel @Inject constructor(router: Router, private val searchInte
     private val _newPage = MutableStateFlow(mutableListOf<ImageItem>())
     val newPage = _newPage
 
-    private var isSearching = false
     private var currentPage = 0
 
     private var screenWidth = 1
     private var cacheDir: File? = null
+
+    private var isLoading = false
+
+    private val _showLoading = MutableStateFlow(false)
+    val showLoading = _showLoading
+    private val _clearImageListEvent = MutableStateFlow(false)
+    val clearImageListEvent = _clearImageListEvent
+
+    var lastQuery: String? = null
 
     fun init(screenWidth: Int, cacheDir: File?) {
         this.screenWidth = screenWidth
         this.cacheDir = cacheDir
     }
 
+    fun loadNewPage() {
+        if (!isLoading) {
+            search(lastQuery ?: "")
+        }
+    }
+
     fun search(query: String) {
         viewModelScope.launch(Dispatchers.IO) {
             Log.d("###SEARCH", query)
+
+            Log.d("###SEARCH", "query = $query, lastQuery = $lastQuery, currentPage = $currentPage")
+            if (lastQuery?.equals(query) == false) {
+                currentPage = 0
+                _clearImageListEvent.value = !_clearImageListEvent.value
+            }
+            lastQuery = query
+
+            isLoading = true
+            showLoading.value = isLoading
             handleResponse(searchInteractor.getSearchResult(query.trim(), currentPage + 1, 10))
         }
     }
@@ -49,8 +73,10 @@ class SearchViewModel @Inject constructor(router: Router, private val searchInte
                 viewModelScope.launch(Dispatchers.IO) {
                     newPage.value = resource.item.map { castImageToAdapterItem(it) }
                         .toMutableList()
+                    currentPage++
+                    isLoading = false
+                    _showLoading.value = isLoading
                 }
-                isSearching = false
             }
             is Resource.Error -> {
             }

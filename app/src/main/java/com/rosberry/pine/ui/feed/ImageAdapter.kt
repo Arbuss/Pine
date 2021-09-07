@@ -8,6 +8,7 @@ import androidx.core.view.updateLayoutParams
 import com.github.satoshun.coroutine.autodispose.view.autoDisposeScope
 import com.rosberry.pine.R
 import com.rosberry.pine.databinding.ItemFeedBinding
+import com.rosberry.pine.databinding.ItemProgressBinding
 import com.rosberry.pine.ui.base.BaseAdapter
 import com.rosberry.pine.util.FileUtil
 import com.squareup.picasso.Picasso
@@ -15,15 +16,68 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ImageAdapter : BaseAdapter<ImageItem, ItemFeedBinding>(mutableListOf()) {
+class ImageAdapter : BaseAdapter<ImageItem>(mutableListOf()) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<ImageItem, ItemFeedBinding> {
-        return ImageViewHolder(
-                ItemFeedBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        )
+    private enum class ViewType {
+        IMAGE, PROGRESS_BAR
     }
 
-    inner class ImageViewHolder(binding: ItemFeedBinding) : BaseViewHolder<ImageItem, ItemFeedBinding>(binding) {
+    fun startProgressBar() {
+        items.add(ImageItem("", "", "",
+                0, 0, null, false, true))
+        notifyItemInserted(items.size - 1)
+    }
+
+    fun stopProgressBar() {
+        val item = items.find { it.isProgress }
+        val index = items.indexOf(item)
+        if (index != -1) {
+            items.removeAt(index)
+            notifyItemRemoved(index)
+        }
+    }
+
+    fun clear() {
+        items.clear()
+        notifyDataSetChanged()
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<ImageItem> {
+        return when (viewType) {
+            ViewType.PROGRESS_BAR.ordinal -> {
+                ProgressViewHolder(
+                        ItemProgressBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                )
+            }
+            else -> {
+                ImageViewHolder(
+                        ItemFeedBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                )
+            }
+        }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return if (items[position].isProgress) {
+            ViewType.PROGRESS_BAR.ordinal
+        } else {
+            ViewType.IMAGE.ordinal
+        }
+    }
+
+    inner class ProgressViewHolder(binding: ItemProgressBinding) :
+            BaseViewHolder<ImageItem>(binding) {
+
+        override fun bind(item: ImageItem) {
+
+        }
+
+    }
+
+    inner class ImageViewHolder(binding: ItemFeedBinding) : BaseViewHolder<ImageItem>(binding) {
+
+        private val binding: ItemFeedBinding
+            get() = _binding as ItemFeedBinding
 
         override fun bind(item: ImageItem) {
             binding.description.text = item.description

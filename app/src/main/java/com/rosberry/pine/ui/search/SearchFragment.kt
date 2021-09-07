@@ -13,6 +13,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.rosberry.pine.R
 import com.rosberry.pine.databinding.FragmentSearchBinding
 import com.rosberry.pine.extension.getScreenWidth
@@ -28,14 +30,39 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
 
     private val viewModel: SearchViewModel by viewModels()
 
+    private val imageAdapter: ImageAdapter?
+        get() = (binding?.imageList?.adapter as? ImageAdapter)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycleScope.launch(Dispatchers.Main) {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.newPage.collect {
-                    Log.d("###SEARCH", "collected")
-                    (binding?.imageList?.adapter as? ImageAdapter)?.addItems(it)
+                    Log.d("###SEARCH", "collected page")
+                    imageAdapter?.addItems(it)
                     binding?.searchList?.isVisible = false
+                }
+            }
+        }
+
+        lifecycleScope.launch(Dispatchers.Main) {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.showLoading.collect { isLoading ->
+                    Log.d("###SEARCH", "collected $isLoading")
+                    if (isLoading) {
+                        imageAdapter?.startProgressBar()
+                    } else {
+                        imageAdapter?.stopProgressBar()
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch(Dispatchers.Main) {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.clearImageListEvent.collect { isLoading ->
+                    Log.d("###SEARCH", "clear")
+                    imageAdapter?.clear()
                 }
             }
         }
@@ -67,6 +94,8 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
             false
         }
 
+        setupScrollListener()
+
         return binding?.root
     }
 
@@ -80,5 +109,21 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
         super.onPause()
         requireActivity().window.setBackgroundDrawableResource(
                 R.drawable.d_logo_pine_black_nine_patch) // TODO возможно что-нибудь другое придумать
+    }
+
+    private fun setupScrollListener() {
+        binding?.imageList?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val lastVisiblePosition = layoutManager.findLastVisibleItemPosition()
+                val adapterItemsCount = imageAdapter?.itemCount ?: 0
+                Log.d("###SEARCH", "lastVisiblePosition = $lastVisiblePosition, adapterItemsCount = $adapterItemsCount")
+                if (lastVisiblePosition + 4 >= adapterItemsCount) {
+                    Log.d("###SEARCH", "start loading")
+                    viewModel.loadNewPage()
+                }
+            }
+        })
     }
 }

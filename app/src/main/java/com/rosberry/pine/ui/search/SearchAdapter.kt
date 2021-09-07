@@ -5,16 +5,18 @@ import android.view.ViewGroup
 import com.rosberry.pine.databinding.ItemSearchBinding
 import com.rosberry.pine.ui.base.BaseAdapter
 
-class SearchAdapter : BaseAdapter<SearchItem, ItemSearchBinding>(mutableListOf()) {
+class SearchAdapter : BaseAdapter<SearchItem>(mutableListOf()) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<SearchItem, ItemSearchBinding> {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<SearchItem> {
         return SearchViewHolder(ItemSearchBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun createDiffUtilCallback(newList: List<SearchItem>) =
             SearchDiffUtilCallback(newList)
 
-    inner class SearchViewHolder(binding: ItemSearchBinding) : BaseViewHolder<SearchItem, ItemSearchBinding>(binding) {
+    inner class SearchViewHolder(binding: ItemSearchBinding) : BaseViewHolder<SearchItem>(binding) {
+        private val binding: ItemSearchBinding
+            get() = _binding as ItemSearchBinding
 
         override fun bind(item: SearchItem) {
             binding.searchText.text = item.query
