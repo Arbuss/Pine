@@ -1,12 +1,12 @@
 package com.rosberry.pine.ui.search
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
 import com.rosberry.pine.data.repository.model.Image
 import com.rosberry.pine.domain.SearchInteractor
 import com.rosberry.pine.ui.base.BaseViewModel
+import com.rosberry.pine.ui.feed.FeedError
 import com.rosberry.pine.ui.feed.ImageItem
 import com.rosberry.pine.util.BlurHashDecoder
 import com.rosberry.pine.util.FileUtil
@@ -31,6 +31,9 @@ class SearchViewModel @Inject constructor(router: Router, private val searchInte
     private var cacheDir: File? = null
 
     private var isLoading = false
+
+    private val _error = MutableStateFlow<FeedError>(FeedError.NoError())
+    val error = _error
 
     private val _showLoading = MutableStateFlow(false)
     val showLoading = _showLoading
@@ -74,8 +77,10 @@ class SearchViewModel @Inject constructor(router: Router, private val searchInte
                     isLoading = false
                     _showLoading.value = isLoading
                 }
+                error.value = FeedError.NoError()
             }
             is Resource.Error -> {
+                _error.value = resource.exception as FeedError
             }
         }
     }

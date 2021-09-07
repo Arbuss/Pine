@@ -23,4 +23,6 @@
     <string name="error_no_connection_body">Check connection and try again</string>
     <string name="error_server_title">Server Error</string>
     <string name="error_server_body">Placeholder text for server error body</string>
+    <string name="error_nothing_found_title">Nothing found</string>
+    <string name="error_nothing_found_body">Change the keyword and try again</string>
 </resources>

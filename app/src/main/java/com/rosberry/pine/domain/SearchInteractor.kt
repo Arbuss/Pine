@@ -16,7 +16,11 @@ class SearchInteractor @Inject constructor(
         return if (connectionInfoInteractor.isInternetAvailable()) {
             try {
                 val items = imageRepository.searchPage(query, page, pageSize)
-                Resource.Success(items)
+                if (items.isNotEmpty()) {
+                    Resource.Success(items)
+                } else {
+                    Resource.Error(FeedError.NothingFound())
+                }
             } catch (serverError: RepositoryError.ServerError) {
                 Resource.Error(FeedError.ServerError())
             } catch (nothingFound: RepositoryError.NothingFound) {

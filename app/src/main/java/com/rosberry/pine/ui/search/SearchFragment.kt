@@ -18,6 +18,7 @@ import com.rosberry.pine.R
 import com.rosberry.pine.databinding.FragmentSearchBinding
 import com.rosberry.pine.extension.getScreenWidth
 import com.rosberry.pine.ui.base.BaseFragment
+import com.rosberry.pine.ui.feed.FeedError
 import com.rosberry.pine.ui.feed.ImageAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -123,5 +124,42 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
                 }
             }
         }
+
+        lifecycleScope.launch(Dispatchers.Main) {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.error.collect { error ->
+                    when (error) {
+                        is FeedError.NoConnection -> {
+                            showError(getString(R.string.error_no_connection_title),
+                                    getString(R.string.error_no_connection_body))
+                        }
+                        is FeedError.ServerError -> {
+                            showError(getString(R.string.error_server_title),
+                                    getString(R.string.error_server_body))
+                        }
+                        is FeedError.NothingFound -> {
+                            showError(getString(R.string.error_nothing_found_title),
+                                    getString(R.string.error_nothing_found_body))
+                        }
+                        is FeedError.NoError -> {
+                            hideError()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showError(errorTitle: String, errorBody: String) {
+        binding?.errorTitle?.isVisible = true
+        binding?.errorTitle?.text = errorTitle
+
+        binding?.errorBody?.isVisible = true
+        binding?.errorBody?.text = errorBody
+    }
+
+    private fun hideError() {
+        binding?.errorTitle?.isVisible = false
+        binding?.errorBody?.isVisible = false
     }
 }

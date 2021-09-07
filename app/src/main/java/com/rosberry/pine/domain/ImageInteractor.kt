@@ -16,7 +16,11 @@ class ImageInteractor @Inject constructor(
         return if (connectionInfoInteractor.isInternetAvailable()) {
             try {
                 val items = imageRepository.getPage(page, pageLength)
-                Resource.Success(items)
+                if (items.isNotEmpty()) {
+                    Resource.Success(items)
+                } else {
+                    Resource.Error(FeedError.NothingFound())
+                }
             } catch (serverError: RepositoryError.ServerError) {
                 Resource.Error(FeedError.ServerError())
             } catch (nothingFount: RepositoryError.NothingFound) {
