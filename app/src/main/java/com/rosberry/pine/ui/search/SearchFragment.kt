@@ -44,7 +44,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
 
-        binding?.searchList?.adapter = SearchAdapter()
+        binding?.searchList?.adapter = SearchHistoryAdapter()
         binding?.imageList?.adapter = ImageAdapter()
 
         viewModel.init(getScreenWidth(), context?.cacheDir)

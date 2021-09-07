@@ -80,6 +80,7 @@ class SearchViewModel @Inject constructor(router: Router, private val searchInte
                 error.value = FeedError.NoError()
             }
             is Resource.Error -> {
+                _showLoading.value = false
                 _error.value = resource.exception as FeedError
             }
         }
