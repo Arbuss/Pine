@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
 import com.rosberry.pine.data.repository.model.Image
 import com.rosberry.pine.domain.ImageInteractor
-import com.rosberry.pine.ui.feed.FeedError
-import com.rosberry.pine.ui.feed.ImageItem
+import com.rosberry.pine.ui.image.ImageError
+import com.rosberry.pine.ui.image.ImageItem
 import com.rosberry.pine.util.BlurHashDecoder
 import com.rosberry.pine.util.FileUtil
 import com.rosberry.pine.util.Resource
@@ -21,24 +21,24 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
 
     private val photos = mutableListOf<ImageItem>()
 
-    private val _newPage = MutableStateFlow(listOf<ImageItem>())
+    protected val _newPage = MutableStateFlow(listOf<ImageItem>())
     val newPage: StateFlow<List<ImageItem>> = _newPage
 
-    private val _error = MutableStateFlow<FeedError>(FeedError.NoError())
-    val error: StateFlow<FeedError> = _error
+    protected val _error = MutableStateFlow<ImageError>(ImageError.NoError())
+    val error: StateFlow<ImageError> = _error
 
-    private val _showLoading = MutableStateFlow(false)
+    protected val _showLoading = MutableStateFlow(false)
     val showLoading: StateFlow<Boolean> = _showLoading
 
-    private var isLoading = false
+    protected var isLoading = false
 
     private var screenWidth = 1
     private var cacheDir: File? = null
 
     var currentPage: Int = 1
-        private set
+        protected set
 
-    fun init(screenWidth: Int, cacheDir: File?) {
+    open fun init(screenWidth: Int, cacheDir: File?) {
         this.screenWidth = screenWidth
         this.cacheDir = cacheDir
         if (photos.isEmpty()) {
@@ -48,7 +48,7 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
         }
     }
 
-    fun loadNewPage() {
+    open fun loadNewPage() {
         if (!isLoading) {
             getPage()
             isLoading = true
@@ -56,14 +56,14 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
         }
     }
 
-    private fun getPage() {
+    protected open fun getPage() {
         viewModelScope.launch(Dispatchers.IO) {
             val newPhotos = imageInteractor.getPage(currentPage + 1, 10)
             responseResultHandling(newPhotos)
         }
     }
 
-    private suspend fun responseResultHandling(resource: Resource<List<Image>>) {
+    protected open suspend fun responseResultHandling(resource: Resource<List<Image>>) {
         when (resource) {
             is Resource.Success -> {
                 viewModelScope.launch(Dispatchers.IO) {
@@ -80,11 +80,11 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
                     isLoading = false
                     _showLoading.value = isLoading
                 }
-                _error.value = FeedError.NoError()
+                _error.value = ImageError.NoError()
             }
             is Resource.Error -> {
                 _showLoading.value = false
-                _error.value = resource.exception as FeedError
+                _error.value = resource.exception as ImageError
             }
         }
     }

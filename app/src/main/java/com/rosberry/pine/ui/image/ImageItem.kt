@@ -1,4 +1,4 @@
-package com.rosberry.pine.ui.feed
+package com.rosberry.pine.ui.image
 
 import com.rosberry.pine.ui.base.BaseAdapterItem
 

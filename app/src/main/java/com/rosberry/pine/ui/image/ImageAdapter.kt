@@ -1,4 +1,4 @@
-package com.rosberry.pine.ui.feed
+package com.rosberry.pine.ui.image
 
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable

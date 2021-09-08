@@ -6,37 +6,33 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.rosberry.pine.R
 import com.rosberry.pine.databinding.FragmentSearchBinding
-import com.rosberry.pine.extension.getScreenWidth
-import com.rosberry.pine.ui.base.BaseFragment
-import com.rosberry.pine.ui.feed.FeedError
-import com.rosberry.pine.ui.feed.ImageAdapter
+import com.rosberry.pine.ui.base.ListedFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class SearchFragment : BaseFragment<FragmentSearchBinding>() {
+class SearchFragment : ListedFragment<FragmentSearchBinding>() {
 
-    private val viewModel: SearchViewModel by viewModels()
+    override val viewModel: SearchViewModel by viewModels()
 
-    private val imageAdapter: ImageAdapter?
-        get() = (binding?.imageList?.adapter as? ImageAdapter)
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setObservers()
-    }
+    override val imageList: RecyclerView?
+        get() = binding?.imageList
+    override val errorTitleView: TextView?
+        get() = binding?.errorTitle
+    override val errorBodyView: TextView?
+        get() = binding?.errorBody
 
     override fun createViewBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSearchBinding? =
             FragmentSearchBinding.inflate(inflater, container, false)
@@ -44,27 +40,24 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
 
-        binding?.searchList?.adapter = SearchHistoryAdapter()
-        binding?.imageList?.adapter = ImageAdapter()
-
-        viewModel.init(getScreenWidth(), context?.cacheDir)
-
         binding?.clearButton?.setOnClickListener {
             binding?.searchField?.editableText?.clear()
+        }
+
+        binding?.backButton?.setOnClickListener {
+            viewModel.onBackPressed()
         }
 
         binding?.searchField?.doOnTextChanged { text, _, _, _ ->
             binding?.clearButton?.isVisible = text?.isNotEmpty() == true
         }
 
-        binding?.searchField?.setOnEditorActionListener { textView, actionId, keyEvent ->
+        binding?.searchField?.setOnEditorActionListener { _, actionId, keyEvent ->
             if (keyEvent?.keyCode == KeyEvent.KEYCODE_ENTER || actionId == EditorInfo.IME_ACTION_DONE) {
                 viewModel.search(binding?.searchField?.text?.toString() ?: "")
             }
             false
         }
-
-        setupScrollListener()
 
         return binding?.root
     }
@@ -81,85 +74,18 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
                 R.drawable.d_logo_pine_black_nine_patch) // TODO возможно что-нибудь другое придумать
     }
 
-    private fun setupScrollListener() {
-        binding?.imageList?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-                val lastVisiblePosition = layoutManager.findLastVisibleItemPosition()
-                val adapterItemsCount = imageAdapter?.itemCount ?: 0
-                if (lastVisiblePosition + 4 >= adapterItemsCount) {
-                    viewModel.loadNewPage()
-                }
-            }
-        })
+    override fun setObservers() {
+        super.setObservers()
+        setListClearObserver()
     }
 
-    private fun setObservers() {
+    private fun setListClearObserver() {
         lifecycleScope.launch(Dispatchers.Main) {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.newPage.collect {
-                    imageAdapter?.addItems(it)
-                    binding?.searchList?.isVisible = false
-                }
-            }
-        }
-
-        lifecycleScope.launch(Dispatchers.Main) {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.showLoading.collect { isLoading ->
-                    if (isLoading) {
-                        imageAdapter?.startProgressBar()
-                    } else {
-                        imageAdapter?.stopProgressBar()
-                    }
-                }
-            }
-        }
-
-        lifecycleScope.launch(Dispatchers.Main) {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.clearImageListEvent.collect { isLoading ->
+                viewModel.clearImageListEvent.collect {
                     imageAdapter?.clear()
                 }
             }
         }
-
-        lifecycleScope.launch(Dispatchers.Main) {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.error.collect { error ->
-                    when (error) {
-                        is FeedError.NoConnection -> {
-                            showError(getString(R.string.error_no_connection_title),
-                                    getString(R.string.error_no_connection_body))
-                        }
-                        is FeedError.ServerError -> {
-                            showError(getString(R.string.error_server_title),
-                                    getString(R.string.error_server_body))
-                        }
-                        is FeedError.NothingFound -> {
-                            showError(getString(R.string.error_nothing_found_title),
-                                    getString(R.string.error_nothing_found_body))
-                        }
-                        is FeedError.NoError -> {
-                            hideError()
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun showError(errorTitle: String, errorBody: String) {
-        binding?.errorTitle?.isVisible = true
-        binding?.errorTitle?.text = errorTitle
-
-        binding?.errorBody?.isVisible = true
-        binding?.errorBody?.text = errorBody
-    }
-
-    private fun hideError() {
-        binding?.errorTitle?.isVisible = false
-        binding?.errorBody?.isVisible = false
     }
 }

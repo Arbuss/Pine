@@ -1,7 +1,6 @@
 package com.rosberry.pine.ui.base
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,8 +14,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.rosberry.pine.R
 import com.rosberry.pine.extension.getScreenWidth
-import com.rosberry.pine.ui.feed.FeedError
-import com.rosberry.pine.ui.feed.ImageAdapter
+import com.rosberry.pine.ui.image.ImageAdapter
+import com.rosberry.pine.ui.image.ImageError
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -68,22 +67,24 @@ abstract class ListedFragment<VB : ViewBinding> : BaseFragment<VB>() {
         setLoadingObservers()
     }
 
-    open fun setErrorObservers() {
+    protected open fun setErrorObservers() {
         lifecycleScope.launch(Dispatchers.Main) {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.error.collect { error ->
                     when (error) {
-                        is FeedError.NoConnection -> {
+                        is ImageError.NoConnection -> {
                             showError(getString(R.string.error_no_connection_title),
                                     getString(R.string.error_no_connection_body))
                         }
-                        is FeedError.ServerError -> {
+                        is ImageError.ServerError -> {
                             showError(getString(R.string.error_server_title),
                                     getString(R.string.error_server_body))
                         }
-                        is FeedError.NothingFound -> {
+                        is ImageError.NothingFound -> {
+                            showError(getString(R.string.error_nothing_found_title),
+                                    getString(R.string.error_nothing_found_body))
                         }
-                        is FeedError.NoError -> {
+                        is ImageError.NoError -> {
                             hideError()
                         }
                     }
@@ -92,18 +93,17 @@ abstract class ListedFragment<VB : ViewBinding> : BaseFragment<VB>() {
         }
     }
 
-    open fun setPagingObservers() {
+    protected open fun setPagingObservers() {
         lifecycleScope.launch(Dispatchers.Main) {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.newPage.collect { newPage ->
                     imageAdapter?.addItems(newPage)
-                    Log.d("###List", "add items: ${newPage.size}")
                 }
             }
         }
     }
 
-    open fun setLoadingObservers() {
+    protected open fun setLoadingObservers() {
         lifecycleScope.launch(Dispatchers.Main) {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.showLoading.collect { isLoading ->
@@ -117,7 +117,7 @@ abstract class ListedFragment<VB : ViewBinding> : BaseFragment<VB>() {
         }
     }
 
-    open fun onImageListEnded() {
+    protected open fun onImageListEnded() {
         viewModel.loadNewPage()
     }
 
