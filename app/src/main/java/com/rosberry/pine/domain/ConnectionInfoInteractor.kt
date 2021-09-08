@@ -9,6 +9,7 @@ import javax.inject.Inject
 
 class ConnectionInfoInteractor @Inject constructor(@ApplicationContext private val context: Context) {
 
+    @Suppress("DEPRECATION")
     fun isInternetAvailable(): Boolean {
         var result = false
         val connectivityManager =

@@ -23,6 +23,7 @@ class ImageAdapter : BaseAdapter<ImageItem>(mutableListOf()) {
     }
 
     fun startProgressBar() {
+        if (items.any { it.isProgress }) return
         items.add(ImageItem("", "", "",
                 0, 0, null, false, true)) // TODO почистить, возможно сделать общего родителя для двух итемов холдеров
         notifyItemInserted(items.size - 1)
