@@ -1,7 +1,5 @@
 package com.rosberry.pine.ui.image
 
-import com.rosberry.pine.ui.base.BaseAdapterItem
-
 data class ImageItem(
         val id: String,
         val description: String,
@@ -11,4 +9,4 @@ data class ImageItem(
         val blurHashUri: String?,
         val isLiked: Boolean,
         val isProgress: Boolean = false
-) : BaseAdapterItem
+) : BaseImageItem

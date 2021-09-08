@@ -5,32 +5,36 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.updateLayoutParams
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewbinding.ViewBinding
 import com.github.satoshun.coroutine.autodispose.view.autoDisposeScope
 import com.rosberry.pine.R
 import com.rosberry.pine.databinding.ItemFeedBinding
 import com.rosberry.pine.databinding.ItemProgressBinding
-import com.rosberry.pine.ui.base.BaseAdapter
+import com.rosberry.pine.databinding.ItemProgressFullscreenBinding
 import com.rosberry.pine.util.FileUtil
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ImageAdapter : BaseAdapter<ImageItem>(mutableListOf()) {
+class ImageAdapter(private val items: MutableList<BaseImageItem> = mutableListOf()) :
+        RecyclerView.Adapter<ImageAdapter.BaseImageViewHolder>() {
 
     private enum class ViewType {
-        IMAGE, PROGRESS_BAR
+        IMAGE, PROGRESS_BAR, PROGRESS_BAR_FULLSCREEN
     }
 
     fun startProgressBar() {
-        if (items.any { it.isProgress }) return
-        items.add(ImageItem("", "", "",
-                0, 0, null, false, true)) // TODO почистить, возможно сделать общего родителя для двух итемов холдеров
+        if (hasProgress()) return
+
+        items.add(ProgressItem(items.size == 0))
         notifyItemInserted(items.size - 1)
     }
 
     fun stopProgressBar() {
-        val item = items.find { it.isProgress }
+        val item = items.find { it is ProgressItem }
         val index = items.indexOf(item)
         if (index != -1) {
             items.removeAt(index)
@@ -43,11 +47,30 @@ class ImageAdapter : BaseAdapter<ImageItem>(mutableListOf()) {
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<ImageItem> {
+    fun addItems(newItems: List<ImageItem>) {
+        if (hasProgress()) {
+            stopProgressBar()
+        }
+        val diffUtilCallback = ImageDiffUtilCallback((items + newItems) as List<ImageItem>)
+        val diffResult = DiffUtil.calculateDiff(diffUtilCallback)
+        val oldItems = items.toList()
+        items.clear()
+        items.addAll(oldItems + newItems)
+        diffResult.dispatchUpdatesTo(this)
+    }
+
+    fun hasProgress() = items.any { it is ProgressItem }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseImageViewHolder {
         return when (viewType) {
             ViewType.PROGRESS_BAR.ordinal -> {
                 ProgressViewHolder(
                         ItemProgressBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                )
+            }
+            ViewType.PROGRESS_BAR_FULLSCREEN.ordinal -> {
+                ProgressFullscreenViewHolder(
+                        ItemProgressFullscreenBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 )
             }
             else -> {
@@ -59,28 +82,35 @@ class ImageAdapter : BaseAdapter<ImageItem>(mutableListOf()) {
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (items[position].isProgress) {
-            ViewType.PROGRESS_BAR.ordinal
-        } else {
-            ViewType.IMAGE.ordinal
+        return when (items[position]) {
+            is ProgressItem -> {
+                if ((items[position] as? ProgressItem)?.isFullscreen == true) {
+                    ViewType.PROGRESS_BAR_FULLSCREEN.ordinal
+                } else {
+                    ViewType.PROGRESS_BAR.ordinal
+                }
+            }
+            else -> {
+                ViewType.IMAGE.ordinal
+            }
         }
     }
+
+    abstract inner class BaseImageViewHolder(protected val _binding: ViewBinding) :
+            RecyclerView.ViewHolder(_binding.root)
 
     inner class ProgressViewHolder(binding: ItemProgressBinding) :
-            BaseViewHolder<ImageItem>(binding) {
+            BaseImageViewHolder(binding)
 
-        override fun bind(item: ImageItem) {
+    inner class ProgressFullscreenViewHolder(binding: ItemProgressFullscreenBinding) :
+            BaseImageViewHolder(binding)
 
-        }
-
-    }
-
-    inner class ImageViewHolder(binding: ItemFeedBinding) : BaseViewHolder<ImageItem>(binding) {
+    inner class ImageViewHolder(binding: ItemFeedBinding) : BaseImageViewHolder(binding) {
 
         private val binding: ItemFeedBinding
             get() = _binding as ItemFeedBinding
 
-        override fun bind(item: ImageItem) {
+        fun bind(item: ImageItem) {
             binding.description.text = item.description
 
             if (item.isLiked) {
@@ -124,16 +154,30 @@ class ImageAdapter : BaseAdapter<ImageItem>(mutableListOf()) {
         }
     }
 
-    override fun createDiffUtilCallback(newList: List<ImageItem>) = ImageDiffUtilCallback(newList)
+    inner class ImageDiffUtilCallback(private val newList: List<ImageItem>) :
+            DiffUtil.Callback() {
 
-    inner class ImageDiffUtilCallback(newList: List<ImageItem>) :
-            BaseDiffUtilCallback<ImageItem>(newList) {
+        override fun getOldListSize() = items.size
+
+        override fun getNewListSize() = newList.size
 
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-                items[oldItemPosition].id == newList[newItemPosition].id
+                getOldItemByPosition(oldItemPosition)?.id == newList[newItemPosition].id
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-                items[oldItemPosition].isLiked == newList[newItemPosition].isLiked
+                getOldItemByPosition(oldItemPosition)?.isLiked == newList[newItemPosition].isLiked
+
+        private fun getOldItemByPosition(position: Int): ImageItem? {
+            return items[position] as? ImageItem
+        }
 
     }
+
+    override fun onBindViewHolder(holder: BaseImageViewHolder, position: Int) {
+        if (holder is ImageViewHolder) {
+            holder.bind(items[position] as ImageItem)
+        }
+    }
+
+    override fun getItemCount() = items.size
 }
