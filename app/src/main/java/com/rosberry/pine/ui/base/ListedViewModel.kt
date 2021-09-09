@@ -1,7 +1,6 @@
 package com.rosberry.pine.ui.base
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
 import com.rosberry.pine.data.repository.model.Image
@@ -35,7 +34,7 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
     private var screenWidth = 1
     private var cacheDir: File? = null
 
-    var currentPage: Int = 1
+    var currentPage: Int = 0
         protected set
 
     open fun init(screenWidth: Int, cacheDir: File?) {
@@ -75,7 +74,6 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
 
                     _newPage.value = resultList
                     photos.addAll(resultList)
-                    Log.d("###List", "photos: ${photos.size}")
                     currentPage++
                     isLoading = false
                     _showLoading.value = isLoading
@@ -83,6 +81,7 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
                 _error.value = ImageError.NoError()
             }
             is Resource.Error -> {
+                isLoading = false
                 _showLoading.value = false
                 _error.value = resource.exception as ImageError
             }

@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
+import com.google.android.material.snackbar.Snackbar
 
 abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
@@ -29,5 +31,13 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
+    }
+
+    fun showSnackbar(@StringRes titleTextId: Int, @StringRes actionTextId: Int, action: () -> Unit) {
+        binding?.root?.let { view ->
+            Snackbar.make(view, getString(titleTextId), Snackbar.LENGTH_INDEFINITE)
+                .setAction(getString(actionTextId)) { action() }
+                .show()
+        }
     }
 }

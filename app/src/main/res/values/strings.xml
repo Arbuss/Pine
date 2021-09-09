@@ -25,4 +25,8 @@
     <string name="error_server_body">Placeholder text for server error body</string>
     <string name="error_nothing_found_title">Nothing found</string>
     <string name="error_nothing_found_body">Change the keyword and try again</string>
+
+    <!-- Snackbar -->
+    <string name="snackbar_no_connection_title">No connection</string>
+    <string name="snackbar_no_connection_action">Check connection and tap to repeat</string>
 </resources>

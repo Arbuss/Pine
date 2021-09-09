@@ -73,8 +73,15 @@ abstract class ListedFragment<VB : ViewBinding> : BaseFragment<VB>() {
                 viewModel.error.collect { error ->
                     when (error) {
                         is ImageError.NoConnection -> {
-                            showError(getString(R.string.error_no_connection_title),
-                                    getString(R.string.error_no_connection_body))
+                            if (viewModel.currentPage != 0) {
+                                showSnackbar(R.string.snackbar_no_connection_title,
+                                        R.string.snackbar_no_connection_action) {
+                                    viewModel.loadNewPage()
+                                }
+                            } else {
+                                showError(getString(R.string.error_no_connection_title),
+                                        getString(R.string.error_no_connection_body))
+                            }
                         }
                         is ImageError.ServerError -> {
                             showError(getString(R.string.error_server_title),
