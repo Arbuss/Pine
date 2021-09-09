@@ -8,6 +8,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_gravity="center"
-        android:layout_marginVertical="16dp" />
+        android:layout_marginVertical="16dp"
+        android:progressTint="@color/progress_bar_color" />
 
 </LinearLayout>

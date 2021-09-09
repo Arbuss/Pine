@@ -24,7 +24,8 @@
             android:layout_marginStart="16dp"
             android:background="@null"
             android:contentDescription="@string/search_fragment_content_description_back_button"
-            android:src="@drawable/ic_back" />
+            android:src="@drawable/ic_back"
+            app:tint="?colorPrimary" />
 
         <EditText android:id="@+id/search_field"
             android:layout_width="0dp"
@@ -51,17 +52,14 @@
             tools:visibility="visible" />
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView android:id="@+id/image_list"
+    <include layout="@layout/view_feed"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="4dp"
-        android:background="@android:color/white"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/top_container"
-        tools:listitem="@layout/item_feed" />
+        app:layout_constraintTop_toBottomOf="@+id/top_container" />
 
     <androidx.recyclerview.widget.RecyclerView android:id="@+id/search_list"
         android:layout_width="0dp"
@@ -73,33 +71,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/top_container"
         tools:listitem="@layout/item_search" />
-
-    <TextView android:id="@+id/error_title"
-        style="@style/Title1B"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:includeFontPadding="false"
-        android:textColor="?colorPrimary"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Error Title"
-        tools:visibility="visible" />
-
-    <TextView android:id="@+id/error_body"
-        style="@style/Caption1A"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:includeFontPadding="false"
-        android:textColor="?colorPrimaryVariant"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/error_title"
-        tools:text="Error Body"
-        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

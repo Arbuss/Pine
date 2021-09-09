@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.rosberry.pine.R
+import com.rosberry.pine.databinding.ViewFeedBinding
 import com.rosberry.pine.extension.getScreenWidth
 import com.rosberry.pine.ui.image.ImageAdapter
 import com.rosberry.pine.ui.image.ImageError
@@ -24,9 +25,14 @@ abstract class ListedFragment<VB : ViewBinding> : BaseFragment<VB>() {
 
     protected abstract val viewModel: ListedViewModel
 
-    protected abstract val imageList: RecyclerView?
-    protected abstract val errorTitleView: TextView?
-    protected abstract val errorBodyView: TextView?
+    private var feedViewBinding: ViewFeedBinding? = null
+
+    protected val imageList: RecyclerView?
+        get() = feedViewBinding?.imageList
+    protected val errorTitleView: TextView?
+        get() = feedViewBinding?.errorTitle
+    protected val errorBodyView: TextView?
+        get() = feedViewBinding?.errorBody
 
     protected val imageAdapter: ImageAdapter?
         get() = imageList?.adapter as? ImageAdapter
@@ -38,7 +44,7 @@ abstract class ListedFragment<VB : ViewBinding> : BaseFragment<VB>() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-
+        feedViewBinding = ViewFeedBinding.bind(binding!!.root)
         imageList?.adapter = ImageAdapter()
 
         viewModel.init(getScreenWidth(), context?.cacheDir)

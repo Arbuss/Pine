@@ -6,14 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.RecyclerView
 import com.rosberry.pine.R
 import com.rosberry.pine.databinding.FragmentSearchBinding
 import com.rosberry.pine.ui.base.ListedFragment
@@ -26,13 +24,6 @@ import kotlinx.coroutines.launch
 class SearchFragment : ListedFragment<FragmentSearchBinding>() {
 
     override val viewModel: SearchViewModel by viewModels()
-
-    override val imageList: RecyclerView?
-        get() = binding?.imageList
-    override val errorTitleView: TextView?
-        get() = binding?.errorTitle
-    override val errorBodyView: TextView?
-        get() = binding?.errorBody
 
     override fun createViewBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentSearchBinding? =
             FragmentSearchBinding.inflate(inflater, container, false)

@@ -17,6 +17,7 @@
     <string name="search_fragment_hint">Search</string>
     <string name="search_fragment_content_description_back_button">Back Button</string>
     <string name="search_fragment_content_description_clear_button">Clear Button</string>
+    <string name="item_search_content_description_clock">Clock</string>
 
     <!-- Errors -->
     <string name="error_no_connection_title">No connection</string>
