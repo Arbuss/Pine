@@ -141,7 +141,7 @@ abstract class ListedFragment<VB : ViewBinding> : BaseFragment<VB>() {
                 val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                 val lastVisiblePosition = layoutManager.findLastVisibleItemPosition()
                 val adapterItemsCount = imageAdapter?.itemCount ?: 0
-                if (lastVisiblePosition + 4 >= adapterItemsCount) {
+                if (lastVisiblePosition >= 0 && lastVisiblePosition + 4 >= adapterItemsCount) {
                     onImageListEnded()
                 }
             }
