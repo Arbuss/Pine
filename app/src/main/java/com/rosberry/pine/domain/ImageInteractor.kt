@@ -1,6 +1,5 @@
 package com.rosberry.pine.domain
 
-import android.util.Log
 import com.rosberry.pine.data.repository.ImageRepository
 import com.rosberry.pine.data.repository.RepositoryError
 import com.rosberry.pine.data.repository.model.Image
@@ -20,7 +19,6 @@ class ImageInteractor @Inject constructor(
                 if (items.isNotEmpty()) {
                     Resource.Success(items)
                 } else {
-                    Log.d("###List", "nothing found")
                     Resource.Error(ImageError.NothingFound())
                 }
             } catch (serverError: RepositoryError.ServerError) {

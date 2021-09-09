@@ -1,7 +1,7 @@
 package com.rosberry.pine.di
 
 import com.rosberry.pine.BuildConfig
-import com.rosberry.pine.data.datasource.remote.Interceptor
+import com.rosberry.pine.data.datasource.remote.AuthInterceptor
 import com.rosberry.pine.data.datasource.remote.unsplash.PhotosApi
 import dagger.Module
 import dagger.Provides
@@ -21,7 +21,7 @@ object NetworkingModule {
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
         val okHttpBuilder = OkHttpClient.Builder()
-        val interceptor = Interceptor()
+        val interceptor = AuthInterceptor()
         val loggingInterceptor = HttpLoggingInterceptor().also {
             it.level = HttpLoggingInterceptor.Level.BODY
         }
