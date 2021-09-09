@@ -11,7 +11,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class FeedFragment : ListedFragment<FragmentFeedBinding>() {
 
     override val viewModel: FeedViewModel by viewModels()
-    
+
     override fun createViewBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentFeedBinding? =
             FragmentFeedBinding.inflate(inflater, container, false)
 
