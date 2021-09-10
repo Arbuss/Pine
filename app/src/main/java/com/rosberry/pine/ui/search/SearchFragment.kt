@@ -1,11 +1,13 @@
 package com.rosberry.pine.ui.search
 
+import android.content.Context
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
@@ -53,6 +55,11 @@ class SearchFragment : ListedFragment<FragmentSearchBinding>() {
         return binding?.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        showKeyboard()
+    }
+
     override fun onResume() {
         super.onResume()
         requireActivity().window.setBackgroundDrawableResource(
@@ -77,6 +84,13 @@ class SearchFragment : ListedFragment<FragmentSearchBinding>() {
                     imageAdapter?.clear()
                 }
             }
+        }
+    }
+
+    private fun showKeyboard() {
+        if (binding?.searchField?.requestFocus() == true) {
+            val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            imm?.showSoftInput(binding?.searchField, InputMethodManager.SHOW_IMPLICIT)
         }
     }
 }
