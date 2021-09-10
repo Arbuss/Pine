@@ -7,6 +7,5 @@ data class ImageItem(
         val width: Int,
         val height: Int,
         val blurHashUri: String?,
-        val isLiked: Boolean,
-        val isProgress: Boolean = false
+        val isLiked: Boolean
 ) : BaseImageItem
