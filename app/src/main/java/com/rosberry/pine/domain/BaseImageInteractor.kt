@@ -5,7 +5,7 @@ import com.rosberry.pine.data.repository.model.Image
 import com.rosberry.pine.ui.image.ImageError
 import com.rosberry.pine.util.Resource
 
-open class BaseInteractor(private val connectionInfoInteractor: ConnectionInfoInteractor) {
+open class BaseImageInteractor(private val connectionInfoInteractor: ConnectionInfoInteractor) {
 
     protected fun isInternetAvailable(page: Int) = if (!connectionInfoInteractor.isInternetAvailable()) {
         if (page == 1) {

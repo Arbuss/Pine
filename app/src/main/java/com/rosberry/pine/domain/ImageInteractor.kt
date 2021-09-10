@@ -8,7 +8,7 @@ import javax.inject.Inject
 class ImageInteractor @Inject constructor(
         private val imageRepository: ImageRepository,
         connectionInfoInteractor: ConnectionInfoInteractor
-) : BaseInteractor(connectionInfoInteractor) {
+) : BaseImageInteractor(connectionInfoInteractor) {
 
     suspend fun getPage(page: Int, pageSize: Int): Resource<List<Image>> = try {
         isInternetAvailable(page)

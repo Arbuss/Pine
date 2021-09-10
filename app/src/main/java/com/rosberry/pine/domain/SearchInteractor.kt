@@ -8,7 +8,7 @@ import javax.inject.Inject
 class SearchInteractor @Inject constructor(
         private val imageRepository: ImageRepository,
         connectionInfoInteractor: ConnectionInfoInteractor
-) : BaseInteractor(connectionInfoInteractor) {
+) : BaseImageInteractor(connectionInfoInteractor) {
 
     suspend fun getSearchResult(query: String, page: Int, pageSize: Int): Resource<List<Image>> = try {
         isInternetAvailable(page)
