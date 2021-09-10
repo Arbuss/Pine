@@ -25,7 +25,6 @@ class AppActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.status_bar_color)
         binding = ActivityAppBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel.showSplash()
