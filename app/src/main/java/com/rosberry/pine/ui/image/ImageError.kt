@@ -8,4 +8,6 @@ sealed class ImageError : Exception() {
     class NothingFound : ImageError()
 
     class NoError : ImageError()
+
+    class NoConnectionWithPagination : ImageError()
 }

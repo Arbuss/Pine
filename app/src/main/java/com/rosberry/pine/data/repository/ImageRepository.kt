@@ -19,6 +19,9 @@ class ImageRepository @Inject constructor(private val api: PhotosApi) {
         if (!response.isSuccessful) {
             throw handleError(response.code())
         }
+        if (response.body() == null) {
+            throw RepositoryError.NothingFound()
+        }
 
         return response.body()!!
     }
@@ -26,6 +29,10 @@ class ImageRepository @Inject constructor(private val api: PhotosApi) {
     private fun <T> handleResponse(response: Response<List<T>>): List<T> {
         if (!response.isSuccessful) {
             throw handleError(response.code())
+        }
+        if (response.body() == null || response.body()
+                    ?.isEmpty() == true) {
+            throw RepositoryError.NothingFound()
         }
 
         return response.body()!!
