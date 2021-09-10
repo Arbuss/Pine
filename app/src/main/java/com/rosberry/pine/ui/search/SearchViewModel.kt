@@ -32,7 +32,7 @@ class SearchViewModel @Inject constructor(
 
     fun search(query: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            if (lastQuery?.equals(query) == false) {
+            if (lastQuery != query) {
                 currentPage = 0
                 _clearImageListEvent.value = !_clearImageListEvent.value
             }
