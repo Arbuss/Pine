@@ -31,7 +31,7 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
 
     protected var isLoading = false
 
-    private var screenWidth = 1
+    private var screenWidth: Int? = null
     private var cacheDir: File? = null
 
     var currentPage: Int = 0
@@ -91,7 +91,7 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
     private suspend fun castImageToAdapterItem(image: Image): ImageItem {
         val (imageWidth, imageHeight) = calcImageSize(image.width, image.height)
 
-        val blurHash = BlurHashDecoder.decode(image.blurHash, screenWidth, imageHeight,
+        val blurHash = BlurHashDecoder.decode(image.blurHash, screenWidth!!, imageHeight,
                 bitmapConfig = Bitmap.Config.RGB_565)
 
         var blurHashUri: String? = null
@@ -110,9 +110,9 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
     }
 
     private fun calcImageSize(width: Int, height: Int): Pair<Int, Int> {
-        val multiplier = width / screenWidth + 1
+        val multiplier = width / screenWidth!! + 1
 
-        val imageWidth = screenWidth
+        val imageWidth = screenWidth!!
         val imageHeight = height / multiplier
         return imageWidth to imageHeight
     }
