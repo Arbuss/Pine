@@ -3,6 +3,7 @@ package com.rosberry.pine.ui.activity
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import com.rosberry.pine.R
@@ -24,6 +25,7 @@ class AppActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.status_bar_color)
         binding = ActivityAppBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel.showSplash()
