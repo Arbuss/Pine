@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 import java.io.File
 
 abstract class ListedViewModel(router: Router, private val imageInteractor: ImageInteractor) : BaseViewModel(router) {
@@ -51,7 +52,7 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
         if (!isLoading) {
             getPage()
             isLoading = true
-            _showLoading.value = isLoading
+            _showLoading.value = true
         }
     }
 
@@ -65,19 +66,18 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
     protected open suspend fun responseResultHandling(resource: Resource<List<Image>>) {
         when (resource) {
             is Resource.Success -> {
-                viewModelScope.launch(Dispatchers.IO) {
-                    val resultList = resource.item.filter { newPhoto ->
-                        !photos.any { oldPhoto -> newPhoto.id == oldPhoto.id }
-                    }
-                        .map { castImageToAdapterItem(it) }
-                        .toMutableList()
-
-                    _newPage.value = resultList
-                    photos.addAll(resultList)
-                    currentPage++
-                    isLoading = false
-                    _showLoading.value = isLoading
+                val resultList = resource.item.filter { newPhoto ->
+                    !photos.any { oldPhoto -> newPhoto.id == oldPhoto.id }
                 }
+                    .map { castImageToAdapterItem(it) }
+                    .toMutableList()
+
+                _newPage.value = resultList
+                photos.addAll(resultList)
+                currentPage++
+                isLoading = false
+                _showLoading.value = false
+
                 _error.value = ImageError.NoError()
             }
             is Resource.Error -> {
@@ -89,6 +89,7 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
     }
 
     private suspend fun castImageToAdapterItem(image: Image): ImageItem {
+        yield()
         val (imageWidth, imageHeight) = calcImageSize(image.width, image.height)
 
         val blurHash = BlurHashDecoder.decode(image.blurHash, screenWidth!!, imageHeight,

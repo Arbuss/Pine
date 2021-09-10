@@ -7,9 +7,11 @@ import com.rosberry.pine.domain.SearchInteractor
 import com.rosberry.pine.ui.base.ListedViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -17,8 +19,9 @@ class SearchViewModel @Inject constructor(
         router: Router,
         private val searchInteractor: SearchInteractor,
         imageInteractor: ImageInteractor
-) :
-        ListedViewModel(router, imageInteractor) {
+) : ListedViewModel(router, imageInteractor) {
+
+    private var job: Job? = null
 
     private val _clearImageListEvent = MutableStateFlow(false)
     val clearImageListEvent: StateFlow<Boolean> = _clearImageListEvent
@@ -32,15 +35,20 @@ class SearchViewModel @Inject constructor(
     }
 
     fun search(query: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        job?.cancel()
+        job = viewModelScope.launch(Dispatchers.IO) {
             if (lastQuery != query) {
                 currentPage = 0
                 _clearImageListEvent.value = !_clearImageListEvent.value
+                withContext(Dispatchers.Main) {
+                    _showLoading.emit(false)
+                    isLoading = false
+                }
             }
             lastQuery = query
 
             isLoading = true
-            _showLoading.value = isLoading
+            _showLoading.value = true
             responseResultHandling(searchInteractor.getSearchResult(query.trim(), currentPage + 1, 10))
         }
     }
