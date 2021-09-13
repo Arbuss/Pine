@@ -8,6 +8,8 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import com.rosberry.pine.databinding.FragmentImageBinding
 import com.rosberry.pine.ui.base.BaseFragment
+import com.squareup.picasso.Callback
+import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -34,6 +36,27 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
             viewModel.onBackPressed()
         }
 
+        binding?.imageName?.text = viewModel.image?.description
+
+        setImage()
+
         return binding?.root
+    }
+
+    private fun setImage() {
+        Picasso.get()
+            .load(viewModel.image?.thumbImageUrl)
+            .noPlaceholder()
+            .into(binding?.image, object : Callback {
+                override fun onSuccess() {
+                    Picasso.get()
+                        .load(viewModel.image?.fullImageUrl)
+                        .noPlaceholder()
+                        .noFade()
+                        .into(binding?.image)
+                }
+
+                override fun onError(e: Exception?) {}
+            })
     }
 }
