@@ -5,6 +5,6 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "SearchCache")
 data class SearchCacheEntity(
-        @PrimaryKey(autoGenerate = true) val id: Long?,
-        val query: String
+        @PrimaryKey val query: String,
+        val timestamp: Long
 )

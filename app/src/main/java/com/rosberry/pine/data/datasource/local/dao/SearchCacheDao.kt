@@ -12,6 +12,6 @@ interface SearchCacheDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(item: SearchCacheEntity)
 
-    @Query("select * from SearchCache order by id desc limit :limit")
-    fun getLastSearchQueries(limit: Int): List<SearchCacheEntity>
+    @Query("select * from SearchCache order by timestamp desc limit :limit")
+    fun getNLastItems(limit: Int): List<SearchCacheEntity>
 }
