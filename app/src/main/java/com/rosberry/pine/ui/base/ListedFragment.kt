@@ -45,7 +45,7 @@ abstract class ListedFragment<VB : ViewBinding> : BaseFragment<VB>() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         feedViewBinding = ViewFeedBinding.bind(binding!!.root)
-        imageList?.adapter = ImageAdapter()
+        imageList?.adapter = ImageAdapter(viewModel)
 
         viewModel.init(getScreenWidth(), context?.cacheDir)
 

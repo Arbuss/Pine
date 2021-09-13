@@ -5,8 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
 import com.rosberry.pine.data.repository.model.Image
 import com.rosberry.pine.domain.ImageInteractor
+import com.rosberry.pine.navigation.Screens
+import com.rosberry.pine.ui.fullscreen.FullscreenImage
 import com.rosberry.pine.ui.image.ImageError
 import com.rosberry.pine.ui.image.ImageItem
+import com.rosberry.pine.ui.image.OnImageClickListener
 import com.rosberry.pine.util.BlurHashDecoder
 import com.rosberry.pine.util.FileUtil
 import com.rosberry.pine.util.Resource
@@ -17,9 +20,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import java.io.File
 
-abstract class ListedViewModel(router: Router, private val imageInteractor: ImageInteractor) : BaseViewModel(router) {
+abstract class ListedViewModel(router: Router, private val imageInteractor: ImageInteractor) : BaseViewModel(router),
+                                                                                               OnImageClickListener {
 
-    private val photos = mutableListOf<ImageItem>()
+    private val photos = mutableListOf<Image>()
 
     protected val _newPage = MutableStateFlow(listOf<ImageItem>())
     val newPage: StateFlow<List<ImageItem>> = _newPage
@@ -44,7 +48,9 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
         if (photos.isEmpty()) {
             loadNewPage()
         } else {
-            _newPage.value = photos
+            viewModelScope.launch {
+                _newPage.value = photos.map { castImageToAdapterItem(it) }
+            }
         }
     }
 
@@ -53,6 +59,18 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
             getPage()
             isLoading = true
             _showLoading.value = true
+        }
+    }
+
+    override fun onImageClick(imageId: String) {
+        val savedImage = photos.find { it.id == imageId }
+        savedImage?.let { image ->
+            val fullscreenImage = FullscreenImage(
+                    image.urls.full,
+                    image.urls.thumb,
+                    image.description
+            )
+            router.navigateTo(Screens.FullscreenImage(fullscreenImage))
         }
     }
 
@@ -66,14 +84,15 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
     protected open suspend fun responseResultHandling(resource: Resource<List<Image>>) {
         when (resource) {
             is Resource.Success -> {
-                val resultList = resource.item.filter { newPhoto ->
+                val rawList = resource.item.filter { newPhoto ->
                     !photos.any { oldPhoto -> newPhoto.id == oldPhoto.id }
                 }
+                val resultList = rawList
                     .map { castImageToAdapterItem(it) }
                     .toMutableList()
 
                 _newPage.value = resultList
-                photos.addAll(resultList)
+                photos.addAll(rawList)
                 currentPage++
                 isLoading = false
                 _showLoading.value = false
@@ -92,8 +111,12 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
         yield()
         val (imageWidth, imageHeight) = calcImageSize(image.width, image.height)
 
-        val blurHash = BlurHashDecoder.decode(image.blurHash, screenWidth!!, imageHeight,
-                bitmapConfig = Bitmap.Config.RGB_565)
+        var blurHash: Bitmap? = null
+
+        if (cacheDir != null && !FileUtil.isFileExist(cacheDir!!, image.id)) {
+            blurHash = BlurHashDecoder.decode(image.blurHash, screenWidth!!, imageHeight,
+                    bitmapConfig = Bitmap.Config.RGB_565)
+        }
 
         var blurHashUri: String? = null
 

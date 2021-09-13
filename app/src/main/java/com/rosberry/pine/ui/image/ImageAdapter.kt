@@ -19,7 +19,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ImageAdapter(private val items: MutableList<BaseImageItem> = mutableListOf()) :
+class ImageAdapter(
+        private val listener: OnImageClickListener,
+        private val items: MutableList<BaseImageItem> = mutableListOf()
+) :
         RecyclerView.Adapter<ImageAdapter.BaseImageViewHolder>() {
 
     private enum class ViewType {
@@ -106,6 +109,14 @@ class ImageAdapter(private val items: MutableList<BaseImageItem> = mutableListOf
             BaseImageViewHolder(binding)
 
     inner class ImageViewHolder(binding: ItemFeedBinding) : BaseImageViewHolder(binding) {
+
+        init {
+            binding.image.setOnClickListener {
+                (items[layoutPosition] as? ImageItem)?.let {
+                    listener.onImageClick(it.id)
+                }
+            }
+        }
 
         private val binding: ItemFeedBinding
             get() = _binding as ItemFeedBinding

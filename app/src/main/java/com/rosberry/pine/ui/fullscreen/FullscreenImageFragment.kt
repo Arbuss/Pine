@@ -8,7 +8,9 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import com.rosberry.pine.databinding.FragmentImageBinding
 import com.rosberry.pine.ui.base.BaseFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
 
     private val IMAGE_KEY = "image_key"
@@ -25,8 +27,13 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
             FragmentImageBinding.inflate(inflater, container, false)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        viewModel.image = requireArguments().getParcelable(IMAGE_KEY)
         super.onCreateView(inflater, container, savedInstanceState)
+        viewModel.image = requireArguments().getParcelable(IMAGE_KEY)
+
+        binding?.backButton?.setOnClickListener {
+            viewModel.onBackPressed()
+        }
+
         return binding?.root
     }
 }
