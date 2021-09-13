@@ -19,7 +19,7 @@ class ImageRepository @Inject constructor(private val api: PhotosApi, private va
     }
 
     suspend fun getLastSearchQueries(count: Int): List<String> {
-        return database.searchCacheDao().getNLastItems(count).map { it.query }
+        return database.searchCacheDao().getLastSearchQueries(count).map { it.query }
     }
 
     private fun <T> handleResponse(response: Response<T>): T {

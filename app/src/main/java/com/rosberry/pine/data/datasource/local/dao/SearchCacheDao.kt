@@ -13,5 +13,5 @@ interface SearchCacheDao {
     fun insert(item: SearchCacheEntity)
 
     @Query("select * from SearchCache order by id desc limit :limit")
-    fun getNLastItems(limit: Int): List<SearchCacheEntity>
+    fun getLastSearchQueries(limit: Int): List<SearchCacheEntity>
 }
