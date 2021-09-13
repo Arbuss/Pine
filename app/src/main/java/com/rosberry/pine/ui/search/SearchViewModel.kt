@@ -26,6 +26,9 @@ class SearchViewModel @Inject constructor(
     private val _clearImageListEvent = MutableStateFlow(false)
     val clearImageListEvent: StateFlow<Boolean> = _clearImageListEvent
 
+    private val _searchList = MutableStateFlow(listOf<SearchItem>())
+    val searchList: StateFlow<List<SearchItem>> = _searchList
+
     var lastQuery: String? = null
 
     override fun loadNewPage() {
@@ -50,6 +53,13 @@ class SearchViewModel @Inject constructor(
             isLoading = true
             _showLoading.value = true
             responseResultHandling(searchInteractor.getSearchResult(query.trim(), currentPage + 1, 10))
+        }
+    }
+
+    fun fillSearchList() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _searchList.value = searchInteractor.getLastSearchQueries(10)
+                .map { SearchItem(it) }
         }
     }
 }

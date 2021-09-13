@@ -16,4 +16,8 @@ class SearchInteractor @Inject constructor(
     } catch (e: Exception) {
         getError(e)
     }
+
+    suspend fun getLastSearchQueries(count: Int): List<String> {
+        return imageRepository.getLastSearchQueries(count)
+    }
 }

@@ -1,18 +1,25 @@
 package com.rosberry.pine.data.repository
 
+import com.rosberry.pine.data.datasource.local.AppDatabase
+import com.rosberry.pine.data.datasource.local.entity.SearchCacheEntity
 import com.rosberry.pine.data.datasource.remote.unsplash.PhotosApi
 import com.rosberry.pine.data.repository.model.Image
 import retrofit2.Response
 import javax.inject.Inject
 
-class ImageRepository @Inject constructor(private val api: PhotosApi) {
+class ImageRepository @Inject constructor(private val api: PhotosApi, private val database: AppDatabase) {
 
     suspend fun getPage(page: Int, pageLength: Int): List<Image> {
         return handleResponse(api.getPage(page, pageLength))
     }
 
     suspend fun searchPage(query: String, page: Int, pageSize: Int): List<Image> {
+        database.searchCacheDao().insert(SearchCacheEntity(null, query))
         return handleResponse(api.searchPage(query, page, pageSize)).results
+    }
+
+    suspend fun getLastSearchQueries(count: Int): List<String> {
+        return database.searchCacheDao().getNLastItems(count).map { it.query }
     }
 
     private fun <T> handleResponse(response: Response<T>): T {

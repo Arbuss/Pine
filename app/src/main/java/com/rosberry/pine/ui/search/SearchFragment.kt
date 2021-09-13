@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class SearchFragment : ListedFragment<FragmentSearchBinding>() {
+class SearchFragment : ListedFragment<FragmentSearchBinding>(), OnSearchItemClickListener {
 
     override val viewModel: SearchViewModel by viewModels()
 
@@ -45,12 +45,20 @@ class SearchFragment : ListedFragment<FragmentSearchBinding>() {
             binding?.clearButton?.isVisible = text?.isNotEmpty() == true
         }
 
+        binding?.searchField?.setOnFocusChangeListener { _, isFocused ->
+            onSearchFieldFocusChanged(isFocused)
+        }
+
         binding?.searchField?.setOnEditorActionListener { _, actionId, keyEvent ->
             if (keyEvent?.keyCode == KeyEvent.KEYCODE_ENTER || actionId == EditorInfo.IME_ACTION_DONE) {
                 viewModel.search(binding?.searchField?.text?.toString() ?: "")
+                hideKeyboard()
+                binding?.searchField?.clearFocus()
             }
             false
         }
+
+        binding?.searchList?.adapter = SearchHistoryAdapter(this)
 
         return binding?.root
     }
@@ -75,6 +83,7 @@ class SearchFragment : ListedFragment<FragmentSearchBinding>() {
     override fun setObservers() {
         super.setObservers()
         setListClearObserver()
+        setSearchListObserver()
     }
 
     private fun setListClearObserver() {
@@ -87,10 +96,39 @@ class SearchFragment : ListedFragment<FragmentSearchBinding>() {
         }
     }
 
+    private fun setSearchListObserver() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.searchList.collect {
+                    (binding?.searchList?.adapter as? SearchHistoryAdapter)?.addItems(it)
+                }
+            }
+        }
+    }
+
     private fun showKeyboard() {
         if (binding?.searchField?.requestFocus() == true) {
             val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             imm?.showSoftInput(binding?.searchField, InputMethodManager.SHOW_IMPLICIT)
         }
+    }
+
+    private fun hideKeyboard() {
+        val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        imm?.hideSoftInputFromWindow(binding?.root?.windowToken, InputMethodManager.HIDE_IMPLICIT_ONLY)
+    }
+
+    private fun onSearchFieldFocusChanged(isFocused: Boolean) {
+        binding?.searchList?.isVisible = isFocused
+        if (isFocused) {
+            viewModel.fillSearchList()
+        }
+    }
+
+    override fun onItemClicked(query: String) {
+        binding?.searchField?.clearFocus()
+        binding?.searchField?.setText(query)
+        viewModel.search(query)
+        hideKeyboard()
     }
 }

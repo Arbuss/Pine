@@ -16,7 +16,7 @@ abstract class BaseAdapter<T : BaseAdapterItem>(protected val items: MutableList
 
     override fun getItemCount() = items.size
 
-    fun addItems(newItems: List<T>) {
+    open fun addItems(newItems: List<T>) {
         val diffUtilCallback = createDiffUtilCallback(items + newItems)
         val diffResult = DiffUtil.calculateDiff(diffUtilCallback)
         val oldItems = items.toList()
