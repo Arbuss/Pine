@@ -14,6 +14,7 @@ import com.rosberry.pine.util.BlurHashDecoder
 import com.rosberry.pine.util.FileUtil
 import com.rosberry.pine.util.Resource
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -24,6 +25,8 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
                                                                                                OnImageClickListener {
 
     private val photos = mutableListOf<Image>()
+
+    private var pagingJob: Job? = null
 
     protected val _newPage = MutableStateFlow(listOf<ImageItem>())
     val newPage: StateFlow<List<ImageItem>> = _newPage
@@ -62,6 +65,11 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
         }
     }
 
+    fun onPause() {
+        pagingJob?.cancel()
+        isLoading = false
+    }
+
     override fun onImageClick(imageId: String) {
         val savedImage = photos.find { it.id == imageId }
         savedImage?.let { image ->
@@ -75,7 +83,7 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
     }
 
     protected open fun getPage() {
-        viewModelScope.launch(Dispatchers.IO) {
+        pagingJob = viewModelScope.launch(Dispatchers.IO) {
             val newPhotos = imageInteractor.getPage(currentPage + 1, 10)
             responseResultHandling(newPhotos)
         }
@@ -120,8 +128,12 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
 
         var blurHashUri: String? = null
 
-        if (cacheDir != null && blurHash != null) {
-            blurHashUri = FileUtil.writeBitmap(cacheDir!!, image.id, blurHash)
+        if (cacheDir != null) {
+            blurHashUri = if (blurHash == null || FileUtil.isFileExist(cacheDir!!, image.id)) {
+                File(cacheDir, image.id).absolutePath
+            } else {
+                FileUtil.writeBitmap(cacheDir!!, image.id, blurHash)
+            }
         }
 
         return ImageItem(image.id,

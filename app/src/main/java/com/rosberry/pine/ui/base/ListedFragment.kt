@@ -133,6 +133,11 @@ abstract class ListedFragment<VB : ViewBinding> : BaseFragment<VB>() {
         viewModel.loadNewPage()
     }
 
+    override fun onPause() {
+        super.onPause()
+        viewModel.onPause()
+    }
+
     private fun setScrollListener() {
         imageList?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
