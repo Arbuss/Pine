@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
+import com.rosberry.pine.R
 import com.rosberry.pine.databinding.FragmentImageBinding
 import com.rosberry.pine.ui.base.BaseFragment
 import com.squareup.picasso.Callback
@@ -56,7 +57,12 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
                         .into(binding?.image)
                 }
 
-                override fun onError(e: Exception?) {}
+                override fun onError(e: Exception?) {
+                    showSnackbar(R.string.snackbar_no_connection_title,
+                            R.string.snackbar_no_connection_action) {
+                        setImage()
+                    }
+                }
             })
     }
 }
