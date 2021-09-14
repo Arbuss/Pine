@@ -48,12 +48,14 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
         Picasso.get()
             .load(viewModel.image?.thumbImageUrl)
             .noPlaceholder()
+            .fit()
             .into(binding?.image, object : Callback {
                 override fun onSuccess() {
                     Picasso.get()
                         .load(viewModel.image?.fullImageUrl)
                         .noPlaceholder()
                         .noFade()
+                        .fit()
                         .into(binding?.image)
                 }
 
