@@ -14,12 +14,15 @@ class ImageRepository @Inject constructor(private val api: PhotosApi, private va
     }
 
     suspend fun searchPage(query: String, page: Int, pageSize: Int): List<Image> {
-        database.searchCacheDao().insert(SearchCacheEntity(null, query))
+        database.searchCacheDao()
+            .insert(SearchCacheEntity(query, System.currentTimeMillis()))
         return handleResponse(api.searchPage(query, page, pageSize)).results
     }
 
     suspend fun getLastSearchQueries(count: Int): List<String> {
-        return database.searchCacheDao().getNLastItems(count).map { it.query }
+        return database.searchCacheDao()
+            .getLastSearchQueries(count)
+            .map { it.query }
     }
 
     private fun <T> handleResponse(response: Response<T>): T {

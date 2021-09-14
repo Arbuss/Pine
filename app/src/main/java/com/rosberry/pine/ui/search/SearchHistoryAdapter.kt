@@ -2,25 +2,31 @@ package com.rosberry.pine.ui.search
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.rosberry.pine.databinding.ItemSearchBinding
-import com.rosberry.pine.ui.base.BaseAdapter
 
-class SearchHistoryAdapter(private val listener: OnSearchItemClickListener) : BaseAdapter<SearchItem>(mutableListOf()) {
+class SearchHistoryAdapter(
+        private val listener: OnSearchItemClickListener,
+        private val items: MutableList<SearchItem> = mutableListOf()
+) : RecyclerView.Adapter<SearchHistoryAdapter.SearchViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<SearchItem> {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
         return SearchViewHolder(ItemSearchBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
-    override fun createDiffUtilCallback(newList: List<SearchItem>) =
-            SearchDiffUtilCallback(newList)
+    override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
+        holder.bind(items[position])
+    }
 
-    override fun addItems(newItems: List<SearchItem>) {
+    override fun getItemCount() = items.size
+
+    fun addItems(newItems: List<SearchItem>) {
         items.clear()
         items.addAll(newItems)
         notifyDataSetChanged()
     }
 
-    inner class SearchViewHolder(binding: ItemSearchBinding) : BaseViewHolder<SearchItem>(binding) {
+    inner class SearchViewHolder(private val binding: ItemSearchBinding) : RecyclerView.ViewHolder(binding.root) {
 
         init {
             binding.root.setOnClickListener {
@@ -28,22 +34,9 @@ class SearchHistoryAdapter(private val listener: OnSearchItemClickListener) : Ba
             }
         }
 
-        private val binding: ItemSearchBinding
-            get() = _binding as ItemSearchBinding
-
-        override fun bind(item: SearchItem) {
+        fun bind(item: SearchItem) {
             binding.searchText.text = item.query
         }
-
-    }
-
-    inner class SearchDiffUtilCallback(newList: List<SearchItem>) : BaseDiffUtilCallback<SearchItem>(newList) {
-
-        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-                items[oldItemPosition].query == newList[newItemPosition].query
-
-        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-                areItemsTheSame(oldItemPosition, newItemPosition)
 
     }
 }
