@@ -35,24 +35,46 @@
             android:textSize="20sp"
             tools:text="Puppy" />
 
-        <ImageButton android:id="@+id/share_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:background="@android:color/transparent"
-            android:contentDescription="@string/view_top_bar_content_description_search_button"
-            android:src="@drawable/ic_share"
-            app:tint="?colorPrimary" />
+        <FrameLayout android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="16dp">
 
-        <ImageButton android:id="@+id/download_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            <ImageButton android:id="@+id/share_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/view_top_bar_content_description_search_button"
+                android:src="@drawable/ic_share"
+                app:tint="?colorPrimary" />
+
+            <ProgressBar android:id="@+id/share_progress_bar"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:indeterminate="true"
+                android:indeterminateTint="@android:color/holo_green_light"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <FrameLayout android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_marginStart="24dp"
-            android:layout_marginEnd="16dp"
-            android:background="@android:color/transparent"
-            android:contentDescription="@string/view_top_bar_content_description_profile_button"
-            android:src="@drawable/ic_download"
-            app:tint="?colorPrimary" />
+            android:layout_marginEnd="16dp">
+
+            <ImageButton android:id="@+id/download_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/view_top_bar_content_description_profile_button"
+                android:src="@drawable/ic_download"
+                app:tint="?colorPrimary" />
+
+            <ProgressBar android:id="@+id/download_progress_bar"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:indeterminate="true"
+                android:indeterminateTint="@android:color/holo_green_light"
+                android:visibility="gone" />
+        </FrameLayout>
     </LinearLayout>
 
     <ImageView android:id="@+id/image"
@@ -71,8 +93,8 @@
         android:layout_marginBottom="16dp"
         android:background="@null"
         android:contentDescription="@string/fullscreen_image_fragment_content_description_like"
+        android:src="@drawable/ic_like"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:src="@drawable/ic_like"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
