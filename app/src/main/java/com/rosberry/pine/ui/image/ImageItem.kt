@@ -1,8 +1,6 @@
-package com.rosberry.pine.ui.feed
+package com.rosberry.pine.ui.image
 
-import com.rosberry.pine.ui.base.BaseAdapterItem
-
-data class FeedItem(
+data class ImageItem(
         val id: String,
         val description: String,
         val url: String,
@@ -10,4 +8,4 @@ data class FeedItem(
         val height: Int,
         val blurHashUri: String?,
         val isLiked: Boolean
-) : BaseAdapterItem
+) : BaseImageItem

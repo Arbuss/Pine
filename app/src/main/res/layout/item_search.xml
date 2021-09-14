@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="4dp"
+    android:background="@android:color/white">
+
+    <ImageView android:id="@+id/clock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginVertical="8dp"
+        android:layout_marginStart="16dp"
+        android:contentDescription="@string/item_search_content_description_clock"
+        android:src="@drawable/ic_clock" />
+
+    <TextView android:id="@+id/search_text"
+        style="@style/Subtitle1A"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="8dp" />
+</LinearLayout>

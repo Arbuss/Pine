@@ -1,13 +1,14 @@
 package com.rosberry.pine.di
 
 import com.rosberry.pine.BuildConfig
-import com.rosberry.pine.data.datasource.remote.usplash.PhotosApi
-import com.rosberry.pine.util.Interceptor
+import com.rosberry.pine.data.datasource.remote.AuthInterceptor
+import com.rosberry.pine.data.datasource.remote.unsplash.PhotosApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -20,8 +21,12 @@ object NetworkingModule {
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
         val okHttpBuilder = OkHttpClient.Builder()
-        val interceptor = Interceptor()
+        val interceptor = AuthInterceptor()
+        val loggingInterceptor = HttpLoggingInterceptor().also {
+            it.level = HttpLoggingInterceptor.Level.BODY
+        }
         okHttpBuilder.addInterceptor(interceptor)
+        okHttpBuilder.addInterceptor(loggingInterceptor)
         return okHttpBuilder.build()
     }
 

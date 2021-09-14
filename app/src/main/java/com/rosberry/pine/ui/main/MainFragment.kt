@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import com.rosberry.pine.R
@@ -16,6 +17,8 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainFragment : BaseFragment<FragmentMainBinding>() {
+
+    private val viewModel: MainViewModel by viewModels()
 
     private val fragments = arrayOf(
             FeedFragment(), FavoriteFragment()
@@ -29,6 +32,9 @@ class MainFragment : BaseFragment<FragmentMainBinding>() {
         setTitle()
         initViewPager()
         initTabs()
+        binding?.topBar?.searchButton?.setOnClickListener {
+            viewModel.openSearchScreen()
+        }
         return binding?.root
     }
 

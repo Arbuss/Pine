@@ -10,7 +10,7 @@
         <item name="colorSecondaryVariant">@color/main_2_60</item>
         <item name="colorOnSecondary">@color/main_2_100</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">@color/main_1_60</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/additional_4_100</item>
         <!-- Customize your theme here. -->
         <item name="android:windowBackground">@color/main_1_60</item>
     </style>

@@ -5,15 +5,19 @@ import com.rosberry.pine.data.repository.model.Image
 import com.rosberry.pine.util.Resource
 import javax.inject.Inject
 
-class ImageInteractor @Inject constructor(
+class SearchInteractor @Inject constructor(
         private val imageRepository: ImageRepository,
         connectionInfoInteractor: ConnectionInfoInteractor
 ) : BaseImageInteractor(connectionInfoInteractor) {
 
-    suspend fun getPage(page: Int, pageSize: Int): Resource<List<Image>> = try {
+    suspend fun getSearchResult(query: String, page: Int, pageSize: Int): Resource<List<Image>> = try {
         isInternetAvailable(page)
-        responseHandler(imageRepository.getPage(page, pageSize))
+        responseHandler(imageRepository.searchPage(query, page, pageSize))
     } catch (e: Exception) {
         getError(e)
+    }
+
+    suspend fun getLastSearchQueries(count: Int): List<String> {
+        return imageRepository.getLastSearchQueries(count)
     }
 }
