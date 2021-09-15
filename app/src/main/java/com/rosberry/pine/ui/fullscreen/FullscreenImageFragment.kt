@@ -8,7 +8,9 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import com.rosberry.pine.R
 import com.rosberry.pine.databinding.FragmentImageBinding
+import com.rosberry.pine.extension.getScreenWidth
 import com.rosberry.pine.ui.base.BaseFragment
+import com.rosberry.pine.util.ImageUtil
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,17 +48,19 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
 
     private fun setImage() {
         try {
+            val (width, height) = ImageUtil.calcImageSize(getScreenWidth(), viewModel.image!!.width,
+                    viewModel.image!!.height)
             Picasso.get()
                 .load(viewModel.image?.thumbImageUrl)
                 .noPlaceholder()
-                .fit()
+                .resize(width, height)
                 .into(binding?.image, object : Callback {
                     override fun onSuccess() {
                         Picasso.get()
                             .load(viewModel.image?.fullImageUrl)
                             .noPlaceholder()
                             .noFade()
-                            .fit()
+                            .resize(width, height)
                             .into(binding?.image)
                     }
 

@@ -7,5 +7,7 @@ import kotlinx.parcelize.Parcelize
 data class FullscreenImage(
         val fullImageUrl: String,
         val thumbImageUrl: String,
-        val description: String?
+        val description: String?,
+        val width: Int,
+        val height: Int
 ) : Parcelable

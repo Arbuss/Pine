@@ -55,10 +55,13 @@
             app:tint="?colorPrimary" />
     </LinearLayout>
 
-    <ImageView android:id="@+id/image"
+    <com.rosberry.pine.ui.fullscreen.ZoomView android:id="@+id/image"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:contentDescription="@string/fullscreen_image_fragment_content_description_image"
+        app:max_zoom_in="15.0"
+        app:max_zoom_out="1.0"
+        app:enable_move="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
