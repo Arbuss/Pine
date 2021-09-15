@@ -37,6 +37,9 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
     protected val _showLoading = MutableStateFlow(false)
     val showLoading: StateFlow<Boolean> = _showLoading
 
+    protected val _clearImageListEvent = MutableStateFlow(false)
+    val clearImageListEvent: StateFlow<Boolean> = _clearImageListEvent
+
     protected var isLoading = false
 
     private var screenWidth: Int? = null
@@ -51,7 +54,8 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
         if (photos.isEmpty()) {
             loadNewPage()
         } else {
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.IO) {
+                _clearImageListEvent.value = !_clearImageListEvent.value
                 _newPage.value = photos.map { castImageToAdapterItem(it) }
             }
         }

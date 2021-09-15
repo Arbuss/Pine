@@ -71,6 +71,7 @@ abstract class ListedFragment<VB : ViewBinding> : BaseFragment<VB>() {
         setErrorObservers()
         setPagingObservers()
         setLoadingObservers()
+        setListClearObserver()
     }
 
     protected open fun setErrorObservers() {
@@ -124,6 +125,16 @@ abstract class ListedFragment<VB : ViewBinding> : BaseFragment<VB>() {
                     } else {
                         imageAdapter?.stopProgressBar()
                     }
+                }
+            }
+        }
+    }
+
+    private fun setListClearObserver() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.clearImageListEvent.collect {
+                    imageAdapter?.clear()
                 }
             }
         }

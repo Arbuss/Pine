@@ -45,26 +45,29 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
     }
 
     private fun setImage() {
-        Picasso.get()
-            .load(viewModel.image?.thumbImageUrl)
-            .noPlaceholder()
-            .fit()
-            .into(binding?.image, object : Callback {
-                override fun onSuccess() {
-                    Picasso.get()
-                        .load(viewModel.image?.fullImageUrl)
-                        .noPlaceholder()
-                        .noFade()
-                        .fit()
-                        .into(binding?.image)
-                }
-
-                override fun onError(e: Exception?) {
-                    showSnackbar(R.string.snackbar_no_connection_title,
-                            R.string.snackbar_no_connection_action) {
-                        setImage()
+        try {
+            Picasso.get()
+                .load(viewModel.image?.thumbImageUrl)
+                .noPlaceholder()
+                .fit()
+                .into(binding?.image, object : Callback {
+                    override fun onSuccess() {
+                        Picasso.get()
+                            .load(viewModel.image?.fullImageUrl)
+                            .noPlaceholder()
+                            .noFade()
+                            .fit()
+                            .into(binding?.image)
                     }
-                }
-            })
+
+                    override fun onError(e: Exception?) {
+                        showSnackbar(R.string.snackbar_no_connection_title,
+                                R.string.snackbar_no_connection_action) {
+                            setImage()
+                        }
+                    }
+                })
+        } catch (ignored: Exception) {
+        }
     }
 }
