@@ -2,6 +2,7 @@ package com.rosberry.pine.ui.fullscreen
 
 import android.Manifest
 import android.content.ContentValues
+import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
@@ -11,12 +12,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
+import androidx.core.net.toFile
+import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.rosberry.pine.BuildConfig
 import com.rosberry.pine.R
 import com.rosberry.pine.databinding.FragmentImageBinding
 import com.rosberry.pine.ui.base.BaseFragment
@@ -26,6 +31,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.io.File
 
 @AndroidEntryPoint
 class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
@@ -46,6 +52,7 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setDownloadingObserver()
+        setSharingObserver()
     }
 
     override fun createViewBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentImageBinding? =
@@ -67,6 +74,10 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
             } catch (ignored: Exception) {
                 hideDownloadProgress()
             }
+        }
+
+        binding?.shareButton?.setOnClickListener {
+            shareImageUrl()
         }
 
         binding?.imageName?.text = viewModel.image?.description
@@ -112,6 +123,33 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
         }
     }
 
+    private fun setSharingObserver() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.sharingItemAddress.collect { address ->
+                    address?.let {
+                        val file = File(address).toUri()
+                        val sharedUri = FileProvider.getUriForFile(requireContext(), BuildConfig.APPLICATION_ID,
+                                file.toFile())
+
+                        val sharingIntent = Intent(Intent.ACTION_SEND)
+                        context?.grantUriPermission(context?.packageName, sharedUri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        sharingIntent.type = "image/*"
+                        sharingIntent.putExtra(Intent.EXTRA_STREAM, sharedUri)
+                        hideSharingProgress()
+                        startActivity(
+                                Intent.createChooser(
+                                        sharingIntent,
+                                        requireActivity().resources.getString(
+                                                R.string.fullscreen_image_fragment_share_via)
+                                )
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     private suspend fun saveBitmap(bitmap: Bitmap?) {
         val contentValues = ContentValues().apply {
             val relativeLocation = Environment.DIRECTORY_PICTURES
@@ -146,5 +184,22 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
     private fun hideDownloadProgress() {
         binding?.downloadProgressBar?.isVisible = false
         binding?.downloadButton?.isVisible = true
+    }
+
+    private fun showSharingProgress() {
+        binding?.shareProgressBar?.isVisible = true
+        binding?.shareButton?.isVisible = false
+    }
+
+    private fun hideSharingProgress() {
+        binding?.shareProgressBar?.isVisible = false
+        binding?.shareButton?.isVisible = true
+    }
+
+    private fun shareImageUrl() {
+        showSharingProgress()
+        requireContext().cacheDir?.let {
+            viewModel.saveBitmapToCache(it)
+        }
     }
 }
