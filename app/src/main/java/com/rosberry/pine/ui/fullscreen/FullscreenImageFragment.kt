@@ -2,15 +2,18 @@ package com.rosberry.pine.ui.fullscreen
 
 import android.Manifest
 import android.content.ContentValues
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -31,13 +34,18 @@ import kotlinx.coroutines.launch
 class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
 
     companion object {
+
         private const val IMAGE_KEY = "image_key"
     }
 
     private val viewModel: FullscreenImageViewModel by viewModels()
 
     private val permissionRequestLauncher =
-            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {}
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+                if (isGranted) {
+                    onDownloadClicked()
+                }
+            }
 
     constructor(image: FullscreenImage) : this() {
         arguments = bundleOf(
@@ -62,13 +70,7 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
         }
 
         binding?.downloadButton?.setOnClickListener {
-            permissionRequestLauncher.launch(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE))
-            try {
-                viewModel.downloadImage()
-                showDownloadProgress()
-            } catch (ignored: Exception) {
-                hideDownloadProgress()
-            }
+            onDownloadClicked()
         }
 
         binding?.imageName?.text = viewModel.image?.description
@@ -79,27 +81,27 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
     }
 
     private fun setImage() {
-            Picasso.get()
-                .load(viewModel.image?.thumbImageUrl)
-                .noPlaceholder()
-                .fit()
-                .into(binding?.image, object : Callback {
-                    override fun onSuccess() {
-                        Picasso.get()
-                            .load(viewModel.image?.fullImageUrl)
-                            .noPlaceholder()
-                            .noFade()
-                            .fit()
-                            .into(binding?.image)
-                    }
+        Picasso.get()
+            .load(viewModel.image?.thumbImageUrl)
+            .noPlaceholder()
+            .fit()
+            .into(binding?.image, object : Callback {
+                override fun onSuccess() {
+                    Picasso.get()
+                        .load(viewModel.image?.fullImageUrl)
+                        .noPlaceholder()
+                        .noFade()
+                        .fit()
+                        .into(binding?.image)
+                }
 
-                    override fun onError(e: Exception?) {
-                        showSnackbar(R.string.snackbar_no_connection_title,
-                                R.string.snackbar_no_connection_action) {
-                            setImage()
-                        }
+                override fun onError(e: Exception?) {
+                    showSnackbar(R.string.snackbar_no_connection_title,
+                            R.string.snackbar_no_connection_action) {
+                        setImage()
                     }
-                })
+                }
+            })
     }
 
     private fun setDownloadingObserver() {
@@ -114,7 +116,7 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
         }
     }
 
-    private suspend fun saveBitmap(bitmap: Bitmap?) {
+    private fun saveBitmap(bitmap: Bitmap?) {
         val contentValues = ContentValues().apply {
             val relativeLocation = Environment.DIRECTORY_PICTURES
             put(MediaStore.MediaColumns.DISPLAY_NAME, viewModel.image?.id)
@@ -148,5 +150,15 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
     private fun hideDownloadProgress() {
         binding?.downloadProgressBar?.isVisible = false
         binding?.downloadButton?.isVisible = true
+    }
+
+    private fun onDownloadClicked() {
+        if (ContextCompat.checkSelfPermission(requireContext(),
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            permissionRequestLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        } else {
+            viewModel.downloadImage()
+            showDownloadProgress()
+        }
     }
 }
