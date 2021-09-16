@@ -106,7 +106,7 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
 
     private fun setDownloadingObserver() {
         lifecycleScope.launch(Dispatchers.Main) {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.bitmap.collect { bitmap ->
                     bitmap?.let {
                         saveBitmap(it)
@@ -118,13 +118,12 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
 
     private fun saveBitmap(bitmap: Bitmap?) {
         val contentValues = ContentValues().apply {
-            val relativeLocation = Environment.DIRECTORY_PICTURES
-            put(MediaStore.MediaColumns.DISPLAY_NAME, viewModel.image?.id)
-            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                put(MediaStore.MediaColumns.RELATIVE_PATH, relativeLocation)
-                put(MediaStore.MediaColumns.IS_PENDING, 1)
-            }
+            put(MediaStore.Images.Media.TITLE, viewModel.image?.id)
+            put(MediaStore.Images.Media.DISPLAY_NAME, viewModel.image?.id + "name")
+            put(MediaStore.Images.Media.DESCRIPTION, viewModel.image?.description)
+            put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis())
+            put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
+            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
         }
 
         val resolver = requireActivity().contentResolver
@@ -135,8 +134,7 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
 
             stream?.let { _ ->
                 bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-                    contentValues.put(MediaStore.MediaColumns.IS_PENDING, 0)
+                stream.flush()
                 hideDownloadProgress()
             }
         }
