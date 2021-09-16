@@ -62,6 +62,15 @@ class ImageAdapter(
         diffResult.dispatchUpdatesTo(this)
     }
 
+    fun setItems(newItems: List<ImageItem>) {
+        if (hasProgress()) {
+            stopProgressBar()
+        }
+        items.clear()
+        items.addAll(newItems)
+        notifyDataSetChanged()
+    }
+
     fun hasProgress() = items.any { it is ProgressItem }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseImageViewHolder {

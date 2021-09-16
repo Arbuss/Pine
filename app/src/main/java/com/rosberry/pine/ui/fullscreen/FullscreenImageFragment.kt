@@ -16,7 +16,9 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
 
-    private val IMAGE_KEY = "image_key"
+    companion object {
+        private const val IMAGE_KEY = "image_key"
+    }
 
     private val viewModel: FullscreenImageViewModel by viewModels()
 
@@ -45,7 +47,6 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
     }
 
     private fun setImage() {
-        try {
             Picasso.get()
                 .load(viewModel.image?.thumbImageUrl)
                 .noPlaceholder()
@@ -67,7 +68,5 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
                         }
                     }
                 })
-        } catch (ignored: Exception) {
-        }
     }
 }

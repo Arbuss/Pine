@@ -72,6 +72,7 @@ abstract class ListedFragment<VB : ViewBinding> : BaseFragment<VB>() {
         setPagingObservers()
         setLoadingObservers()
         setListClearObserver()
+        setRestoreAdapterStateObserver()
     }
 
     protected open fun setErrorObservers() {
@@ -135,6 +136,16 @@ abstract class ListedFragment<VB : ViewBinding> : BaseFragment<VB>() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.clearImageListEvent.collect {
                     imageAdapter?.clear()
+                }
+            }
+        }
+    }
+
+    private fun setRestoreAdapterStateObserver() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.cachedPhotosList.collect {
+                    imageAdapter?.setItems(it)
                 }
             }
         }

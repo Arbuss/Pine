@@ -40,6 +40,9 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
     protected val _clearImageListEvent = MutableStateFlow(false)
     val clearImageListEvent: StateFlow<Boolean> = _clearImageListEvent
 
+    protected val _cachedPhotosList = MutableStateFlow<List<ImageItem>>(emptyList())
+    val cachedPhotosList: StateFlow<List<ImageItem>> = _cachedPhotosList
+
     protected var isLoading = false
 
     private var screenWidth: Int? = null
@@ -55,8 +58,7 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
             loadNewPage()
         } else {
             viewModelScope.launch(Dispatchers.IO) {
-                _clearImageListEvent.value = !_clearImageListEvent.value
-                _newPage.value = photos.map { castImageToAdapterItem(it) }
+                _cachedPhotosList.value = photos.map { castImageToAdapterItem(it) }
             }
         }
     }
@@ -126,7 +128,7 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
         var blurHash: Bitmap? = null
 
         if (cacheDir != null && !FileUtil.isFileExist(cacheDir!!, image.id)) {
-            blurHash = BlurHashDecoder.decode(image.blurHash, screenWidth!!, imageHeight,
+            blurHash = BlurHashDecoder.decode(image.blurHash, screenWidth!! / 20, imageHeight / 20,
                     bitmapConfig = Bitmap.Config.RGB_565)
         }
 
