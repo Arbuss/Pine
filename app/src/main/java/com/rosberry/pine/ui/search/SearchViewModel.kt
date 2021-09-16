@@ -23,9 +23,6 @@ class SearchViewModel @Inject constructor(
 
     private var job: Job? = null
 
-    private val _clearImageListEvent = MutableStateFlow(false)
-    val clearImageListEvent: StateFlow<Boolean> = _clearImageListEvent
-
     private val _searchList = MutableStateFlow(listOf<SearchItem>())
     val searchList: StateFlow<List<SearchItem>> = _searchList
 

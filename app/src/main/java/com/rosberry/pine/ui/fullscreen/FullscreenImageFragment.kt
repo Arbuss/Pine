@@ -30,7 +30,9 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
 
-    private val IMAGE_KEY = "image_key"
+    companion object {
+        private const val IMAGE_KEY = "image_key"
+    }
 
     private val viewModel: FullscreenImageViewModel by viewModels()
 
@@ -77,27 +79,27 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
     }
 
     private fun setImage() {
-        Picasso.get()
-            .load(viewModel.image?.thumbImageUrl)
-            .noPlaceholder()
-            .fit()
-            .into(binding?.image, object : Callback {
-                override fun onSuccess() {
-                    Picasso.get()
-                        .load(viewModel.image?.fullImageUrl)
-                        .noPlaceholder()
-                        .noFade()
-                        .fit()
-                        .into(binding?.image)
-                }
-
-                override fun onError(e: Exception?) {
-                    showSnackbar(R.string.snackbar_no_connection_title,
-                            R.string.snackbar_no_connection_action) {
-                        setImage()
+            Picasso.get()
+                .load(viewModel.image?.thumbImageUrl)
+                .noPlaceholder()
+                .fit()
+                .into(binding?.image, object : Callback {
+                    override fun onSuccess() {
+                        Picasso.get()
+                            .load(viewModel.image?.fullImageUrl)
+                            .noPlaceholder()
+                            .noFade()
+                            .fit()
+                            .into(binding?.image)
                     }
-                }
-            })
+
+                    override fun onError(e: Exception?) {
+                        showSnackbar(R.string.snackbar_no_connection_title,
+                                R.string.snackbar_no_connection_action) {
+                            setImage()
+                        }
+                    }
+                })
     }
 
     private fun setDownloadingObserver() {

@@ -82,18 +82,7 @@ class SearchFragment : ListedFragment<FragmentSearchBinding>(), OnSearchItemClic
 
     override fun setObservers() {
         super.setObservers()
-        setListClearObserver()
         setSearchListObserver()
-    }
-
-    private fun setListClearObserver() {
-        lifecycleScope.launch(Dispatchers.Main) {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.clearImageListEvent.collect {
-                    imageAdapter?.clear()
-                }
-            }
-        }
     }
 
     private fun setSearchListObserver() {
