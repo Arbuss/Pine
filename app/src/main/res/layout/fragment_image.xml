@@ -11,7 +11,6 @@
         android:layout_height="56dp"
         android:background="@color/background_color"
         android:orientation="horizontal"
-        android:padding="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -21,22 +20,25 @@
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:contentDescription="@string/view_top_bar_content_description_app_logo"
+            android:padding="16dp"
             android:src="@drawable/ic_back"
             app:tint="?colorPrimary" />
 
         <TextView android:id="@+id/image_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_marginStart="32dp"
             android:layout_weight="1"
             android:includeFontPadding="false"
             android:letterSpacing="0.019"
+            android:maxLines="1"
             android:textColor="@color/app_title_color"
             android:textSize="20sp"
             tools:text="Puppy" />
 
-        <FrameLayout android:layout_width="24dp"
-            android:layout_height="24dp"
+        <FrameLayout android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="16dp">
 
             <ImageButton android:id="@+id/share_button"
@@ -44,33 +46,37 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/view_top_bar_content_description_search_button"
+                android:padding="16dp"
                 android:src="@drawable/ic_share"
                 app:tint="?colorPrimary" />
 
             <ProgressBar android:id="@+id/share_progress_bar"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
+                android:layout_gravity="center"
                 android:indeterminate="true"
                 android:indeterminateTint="@android:color/holo_green_light"
+                android:padding="16dp"
                 android:visibility="gone" />
         </FrameLayout>
 
-        <FrameLayout android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="16dp">
+        <FrameLayout android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp">
 
             <ImageButton android:id="@+id/download_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/view_top_bar_content_description_profile_button"
+                android:padding="16dp"
                 android:src="@drawable/ic_download"
                 app:tint="?colorPrimary" />
 
             <ProgressBar android:id="@+id/download_progress_bar"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
+                android:layout_gravity="center"
                 android:indeterminate="true"
                 android:indeterminateTint="@android:color/holo_green_light"
                 android:visibility="gone" />
@@ -81,13 +87,13 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:contentDescription="@string/fullscreen_image_fragment_content_description_image"
-        app:max_zoom_in="15.0"
-        app:max_zoom_out="1.0"
         app:enable_move="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/top_bar" />
+        app:layout_constraintTop_toBottomOf="@id/top_bar"
+        app:max_zoom_in="15.0"
+        app:max_zoom_out="1.0" />
 
     <ImageButton android:id="@+id/like_button"
         android:layout_width="wrap_content"
