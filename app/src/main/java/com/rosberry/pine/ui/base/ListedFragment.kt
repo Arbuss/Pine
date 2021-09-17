@@ -46,6 +46,7 @@ abstract class ListedFragment<VB : ViewBinding> : BaseFragment<VB>() {
         super.onCreateView(inflater, container, savedInstanceState)
         feedViewBinding = ViewFeedBinding.bind(binding!!.root)
         imageList?.adapter = ImageAdapter(viewModel)
+        imageAdapter?.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 
         viewModel.init(getScreenWidth(), context?.cacheDir)
 
@@ -75,7 +76,7 @@ abstract class ListedFragment<VB : ViewBinding> : BaseFragment<VB>() {
 
     protected open fun setErrorObservers() {
         lifecycleScope.launch(Dispatchers.Main) {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.error.collect { error ->
                     when (error) {
                         is ImageError.NoConnection -> {
@@ -107,7 +108,7 @@ abstract class ListedFragment<VB : ViewBinding> : BaseFragment<VB>() {
 
     protected open fun setPagingObservers() {
         lifecycleScope.launch(Dispatchers.Main) {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.newPage.collect { newPage ->
                     imageAdapter?.addItems(newPage)
                 }
@@ -117,7 +118,7 @@ abstract class ListedFragment<VB : ViewBinding> : BaseFragment<VB>() {
 
     protected open fun setLoadingObservers() {
         lifecycleScope.launch(Dispatchers.Main) {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.showLoading.collect { isLoading ->
                     if (isLoading) {
                         imageAdapter?.startProgressBar()
