@@ -141,7 +141,6 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
                         hideDownloadProgress()
                     }
                 }
-                hideDownloadProgress()
             }
         }
     }
