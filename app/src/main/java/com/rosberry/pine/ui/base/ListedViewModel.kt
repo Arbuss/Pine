@@ -40,9 +40,6 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
     protected val _clearImageListEvent = MutableStateFlow(false)
     val clearImageListEvent: StateFlow<Boolean> = _clearImageListEvent
 
-    protected val _cachedPhotosList = MutableStateFlow<List<ImageItem>>(emptyList())
-    val cachedPhotosList: StateFlow<List<ImageItem>> = _cachedPhotosList
-
     protected var isLoading = false
 
     private var screenWidth: Int? = null
@@ -51,15 +48,15 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
     var currentPage: Int = 0
         protected set
 
+    init {
+        loadNewPage()
+    }
+
     open fun init(screenWidth: Int, cacheDir: File?) {
         this.screenWidth = screenWidth
         this.cacheDir = cacheDir
-        if (photos.isEmpty()) {
-            loadNewPage()
-        } else {
-            viewModelScope.launch(Dispatchers.IO) {
-                _cachedPhotosList.value = photos.map { castImageToAdapterItem(it) }
-            }
+        viewModelScope.launch(Dispatchers.IO) {
+            _newPage.value = photos.map { castImageToAdapterItem(it) }
         }
     }
 
