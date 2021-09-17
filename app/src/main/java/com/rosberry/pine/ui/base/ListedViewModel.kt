@@ -56,7 +56,9 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
         this.screenWidth = screenWidth
         this.cacheDir = cacheDir
         viewModelScope.launch(Dispatchers.IO) {
-            _newPage.value = photos.map { castImageToAdapterItem(it) }
+            _newPage.value = emptyList()
+            val items = photos.map { castImageToAdapterItem(it) }
+            _newPage.value = items
         }
     }
 
