@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_color">
+
+    <LinearLayout android:id="@+id/top_bar"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:background="@color/background_color"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/view_top_bar_content_description_app_logo"
+            android:src="@drawable/ic_back"
+            app:tint="?colorPrimary" />
+
+        <TextView android:id="@+id/image_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_weight="1"
+            android:includeFontPadding="false"
+            android:letterSpacing="0.019"
+            android:textColor="@color/app_title_color"
+            android:textSize="20sp"
+            tools:text="Puppy" />
+
+        <ImageButton android:id="@+id/share_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/view_top_bar_content_description_search_button"
+            android:src="@drawable/ic_share"
+            app:tint="?colorPrimary" />
+
+        <ImageButton android:id="@+id/download_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/view_top_bar_content_description_profile_button"
+            android:src="@drawable/ic_download"
+            app:tint="?colorPrimary" />
+    </LinearLayout>
+
+    <ImageView android:id="@+id/image"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:contentDescription="@string/fullscreen_image_fragment_content_description_image"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/top_bar" />
+
+    <ImageButton android:id="@+id/like_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@null"
+        android:contentDescription="@string/fullscreen_image_fragment_content_description_like"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/ic_like"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

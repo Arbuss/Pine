@@ -31,4 +31,8 @@ object FileUtil {
 
         return BitmapFactory.decodeFile(address)
     }
+
+    suspend fun isFileExist(directory: File, fileName: String): Boolean {
+        return File(directory, fileName).exists()
+    }
 }
