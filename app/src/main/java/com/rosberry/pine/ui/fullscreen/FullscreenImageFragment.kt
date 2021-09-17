@@ -125,7 +125,7 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
 
     private fun setSharingObserver() {
         lifecycleScope.launch(Dispatchers.Main) {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.sharingItemAddress.collect { address ->
                     address?.let {
                         val file = File(address).toUri()
@@ -133,17 +133,12 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
                                 file.toFile())
 
                         val sharingIntent = Intent(Intent.ACTION_SEND)
-                        context?.grantUriPermission(context?.packageName, sharedUri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        context?.grantUriPermission(context?.packageName, sharedUri,
+                                Intent.FLAG_GRANT_READ_URI_PERMISSION)
                         sharingIntent.type = "image/*"
                         sharingIntent.putExtra(Intent.EXTRA_STREAM, sharedUri)
                         hideSharingProgress()
-                        startActivity(
-                                Intent.createChooser(
-                                        sharingIntent,
-                                        requireActivity().resources.getString(
-                                                R.string.fullscreen_image_fragment_share_via)
-                                )
-                        )
+                        startActivity(sharingIntent)
                     }
                 }
             }

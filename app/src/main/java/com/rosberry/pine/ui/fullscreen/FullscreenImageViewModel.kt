@@ -34,6 +34,7 @@ class FullscreenImageViewModel @Inject constructor(router: Router) : BaseViewMod
     fun saveBitmapToCache(cacheDir: File) {
         viewModelScope.launch(Dispatchers.IO) {
             image?.let {
+                _sharingItemAddress.value = null
                 _sharingItemAddress.value = FileUtil.writeBitmap(cacheDir, it.id + "raw", getBitmap())
             }
         }
