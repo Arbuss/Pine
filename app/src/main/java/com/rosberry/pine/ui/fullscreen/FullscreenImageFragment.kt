@@ -29,6 +29,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
@@ -133,8 +134,13 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
             val stream = resolver?.openOutputStream(uri)
 
             stream?.let { _ ->
-                bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-                stream.flush()
+                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+                    bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+                    stream.flush()
+                    withContext(Dispatchers.Main) {
+                        hideDownloadProgress()
+                    }
+                }
                 hideDownloadProgress()
             }
         }
