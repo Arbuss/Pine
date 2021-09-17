@@ -2,7 +2,6 @@ package com.rosberry.pine.ui.fullscreen
 
 import android.Manifest
 import android.content.ContentValues
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -12,19 +11,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
-import androidx.core.net.toFile
-import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.rosberry.pine.BuildConfig
 import com.rosberry.pine.R
 import com.rosberry.pine.databinding.FragmentImageBinding
 import com.rosberry.pine.extension.getScreenWidth
+import com.rosberry.pine.extension.share
 import com.rosberry.pine.ui.base.BaseFragment
 import com.rosberry.pine.util.ImageUtil
 import com.squareup.picasso.Callback
@@ -33,7 +29,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.io.File
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
@@ -133,17 +129,8 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.sharingItemAddress.collect { address ->
                     address?.let {
-                        val file = File(address).toUri()
-                        val sharedUri = FileProvider.getUriForFile(requireContext(), BuildConfig.APPLICATION_ID,
-                                file.toFile())
-
-                        val sharingIntent = Intent(Intent.ACTION_SEND)
-                        context?.grantUriPermission(context?.packageName, sharedUri,
-                                Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                        sharingIntent.type = "image/*"
-                        sharingIntent.putExtra(Intent.EXTRA_STREAM, sharedUri)
+                        share(address, context)
                         hideSharingProgress()
-                        startActivity(sharingIntent)
                     }
                 }
             }
@@ -167,9 +154,13 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
             val stream = resolver?.openOutputStream(uri)
 
             stream?.let { _ ->
-                bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-                stream.flush()
-                hideDownloadProgress()
+                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+                    bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+                    stream.flush()
+                    withContext(Dispatchers.Main) {
+                        hideDownloadProgress()
+                    }
+                }
             }
         }
     }
