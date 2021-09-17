@@ -4,11 +4,8 @@ import android.Manifest
 import android.content.ContentValues
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +19,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.rosberry.pine.R
 import com.rosberry.pine.databinding.FragmentImageBinding
+import com.rosberry.pine.extension.share
 import com.rosberry.pine.ui.base.BaseFragment
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
@@ -57,6 +55,7 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setDownloadingObserver()
+        setSharingObserver()
     }
 
     override fun createViewBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentImageBinding? =
@@ -72,6 +71,10 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
 
         binding?.downloadButton?.setOnClickListener {
             onDownloadClicked()
+        }
+
+        binding?.shareButton?.setOnClickListener {
+            shareImageUrl()
         }
 
         binding?.imageName?.text = viewModel.image?.description
@@ -117,6 +120,19 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
         }
     }
 
+    private fun setSharingObserver() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                viewModel.sharingItemAddress.collect { address ->
+                    address?.let {
+                        share(address, context)
+                        hideSharingProgress()
+                    }
+                }
+            }
+        }
+    }
+
     private fun saveBitmap(bitmap: Bitmap?) {
         val contentValues = ContentValues().apply {
             put(MediaStore.Images.Media.TITLE, viewModel.image?.id)
@@ -153,6 +169,23 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
     private fun hideDownloadProgress() {
         binding?.downloadProgressBar?.isVisible = false
         binding?.downloadButton?.isVisible = true
+    }
+
+    private fun showSharingProgress() {
+        binding?.shareProgressBar?.isVisible = true
+        binding?.shareButton?.isVisible = false
+    }
+
+    private fun hideSharingProgress() {
+        binding?.shareProgressBar?.isVisible = false
+        binding?.shareButton?.isVisible = true
+    }
+
+    private fun shareImageUrl() {
+        showSharingProgress()
+        requireContext().cacheDir?.let {
+            viewModel.saveBitmapToCache(it)
+        }
     }
 
     private fun onDownloadClicked() {
