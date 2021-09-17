@@ -18,7 +18,10 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
 
-    private val IMAGE_KEY = "image_key"
+    companion object {
+
+        private const val IMAGE_KEY = "image_key"
+    }
 
     private val viewModel: FullscreenImageViewModel by viewModels()
 
@@ -47,31 +50,28 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
     }
 
     private fun setImage() {
-        try {
-            val (width, height) = ImageUtil.calcImageSize(getScreenWidth(), viewModel.image!!.width,
-                    viewModel.image!!.height)
-            Picasso.get()
-                .load(viewModel.image?.thumbImageUrl)
-                .noPlaceholder()
-                .resize(width, height)
-                .into(binding?.image, object : Callback {
-                    override fun onSuccess() {
-                        Picasso.get()
-                            .load(viewModel.image?.fullImageUrl)
-                            .noPlaceholder()
-                            .noFade()
-                            .resize(width, height)
-                            .into(binding?.image)
-                    }
+        val (width, height) = ImageUtil.calcImageSize(getScreenWidth(), viewModel.image!!.width,
+                viewModel.image!!.height)
+        Picasso.get()
+            .load(viewModel.image?.thumbImageUrl)
+            .noPlaceholder()
+            .resize(width, height)
+            .into(binding?.image, object : Callback {
+                override fun onSuccess() {
+                    Picasso.get()
+                        .load(viewModel.image?.fullImageUrl)
+                        .noPlaceholder()
+                        .noFade()
+                        .resize(width, height)
+                        .into(binding?.image)
+                }
 
-                    override fun onError(e: Exception?) {
-                        showSnackbar(R.string.snackbar_no_connection_title,
-                                R.string.snackbar_no_connection_action) {
-                            setImage()
-                        }
+                override fun onError(e: Exception?) {
+                    showSnackbar(R.string.snackbar_no_connection_title,
+                            R.string.snackbar_no_connection_action) {
+                        setImage()
                     }
-                })
-        } catch (ignored: Exception) {
-        }
+                }
+            })
     }
 }
