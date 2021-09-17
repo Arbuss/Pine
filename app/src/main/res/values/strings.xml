@@ -34,4 +34,5 @@
     <!-- Fullscreen -->
     <string name="fullscreen_image_fragment_content_description_image">Image</string>
     <string name="fullscreen_image_fragment_content_description_like">Like</string>
+    <string name="fullscreen_image_fragment_share_via">Share via</string>
 </resources>

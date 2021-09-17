@@ -5,8 +5,10 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class FullscreenImage(
+        val id: String,
         val fullImageUrl: String,
         val thumbImageUrl: String,
+        val rawImageUrl: String,
         val description: String?,
         val width: Int,
         val height: Int
