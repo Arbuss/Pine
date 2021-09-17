@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Matrix
 import android.graphics.PointF
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_MOVE
@@ -22,6 +23,7 @@ class ZoomView(context: Context, attrs: AttributeSet?, defStyle: Int) :
 
     private val pos = PointF(0f, 0f)
     private val dist = PointF(0f, 0f)
+    private var scale = 1f
     private var moveLock = false
 
     var maxZoomIn = DEFAULT_MAX_ZOOM_IN
@@ -80,7 +82,7 @@ class ZoomView(context: Context, attrs: AttributeSet?, defStyle: Int) :
             }
 
             ACTION_MOVE -> {
-                if(moveLock)
+                if (moveLock || scale == 1f)
                     return super.performClick()
                 val posX = event.x - pos.x
                 val posY = event.y - pos.y
@@ -104,7 +106,7 @@ class ZoomView(context: Context, attrs: AttributeSet?, defStyle: Int) :
             ACTION_MOVE -> {
                 val current = PointF(event.getX(0) - event.getX(1),
                         event.getY(0) - event.getY(1))
-                val scale = current.length() / dist.length()
+                scale = current.length() / dist.length()
                 val matrix = Matrix(imageMatrix)
                 matrix.postScale(scale, scale, width / 2f, height / 2f)
                 dist.set(current.x, current.y)
@@ -118,6 +120,7 @@ class ZoomView(context: Context, attrs: AttributeSet?, defStyle: Int) :
         matrix.getValues(values)
 
         val scale = (values[Matrix.MSCALE_X] + values[Matrix.MSCALE_Y]) / 2f
+        this.scale = scale
 
         val width = (drawable?.intrinsicWidth ?: 1) * scale
         val height = (drawable?.intrinsicHeight ?: 1) * scale
