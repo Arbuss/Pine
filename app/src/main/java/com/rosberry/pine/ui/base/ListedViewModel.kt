@@ -25,7 +25,7 @@ import java.io.File
 abstract class ListedViewModel(router: Router, private val imageInteractor: ImageInteractor) : BaseViewModel(router),
                                                                                                OnImageClickListener {
 
-    private val photos = mutableListOf<Image>()
+    protected val photos = mutableListOf<Image>()
 
     private var pagingJob: Job? = null
 
