@@ -35,4 +35,8 @@
     <string name="fullscreen_image_fragment_content_description_image">Image</string>
     <string name="fullscreen_image_fragment_content_description_like">Like</string>
     <string name="fullscreen_image_fragment_share_via">Share via</string>
+    <string name="fullscreen_image_fragment_content_description_back_button">Back Button</string>
+    <string name="fullscreen_image_fragment_content_description_share_button">Share Button</string>
+    <string name="fullscreen_image_fragment_content_description_download_button">Download Button</string>
+
 </resources>
