@@ -92,6 +92,10 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
         }
     }
 
+    override fun onLikeClick(imageId: String) {
+        val image = photos.find { it.id == imageId }
+    }
+
     protected open fun getPage() {
         pagingJob = viewModelScope.launch(Dispatchers.IO) {
             val newPhotos = imageInteractor.getPage(currentPage + 1, 10)
