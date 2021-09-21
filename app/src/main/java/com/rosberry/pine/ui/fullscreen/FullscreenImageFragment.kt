@@ -140,7 +140,7 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
     private fun saveBitmap(bitmap: Bitmap?) {
         val contentValues = ContentValues().apply {
             put(MediaStore.Images.Media.TITLE, viewModel.image?.id)
-            put(MediaStore.Images.Media.DISPLAY_NAME, viewModel.image?.id + "name")
+            put(MediaStore.Images.Media.DISPLAY_NAME, viewModel.image?.id + "raw")
             put(MediaStore.Images.Media.DESCRIPTION, viewModel.image?.description)
             put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis())
             put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())

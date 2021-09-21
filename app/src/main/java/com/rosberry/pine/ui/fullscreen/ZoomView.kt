@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Matrix
 import android.graphics.PointF
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_MOVE
@@ -15,11 +14,14 @@ import com.rosberry.pine.R
 class ZoomView(context: Context, attrs: AttributeSet?, defStyle: Int) :
         androidx.appcompat.widget.AppCompatImageView(context, attrs, defStyle) {
 
-    private val DEFAULT_MAX_ZOOM_IN = 3.0f
-    private val DEFAULT_MAX_ZOOM_OUT = 1.0f
+    companion object {
 
-    private val MIN_ZOOM = 0.5f
-    private val MAX_ZOOM = 10f
+        private const val DEFAULT_MAX_ZOOM_IN = 3.0f
+        private const val DEFAULT_MAX_ZOOM_OUT = 1.0f
+
+        private const val MIN_ZOOM = 0.5f
+        private const val MAX_ZOOM = 10f
+    }
 
     private val pos = PointF(0f, 0f)
     private val dist = PointF(0f, 0f)
