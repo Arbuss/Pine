@@ -125,6 +125,11 @@ class ImageAdapter(
                     listener.onImageClick(it.id)
                 }
             }
+            binding.like.setOnClickListener {
+                (items[layoutPosition] as? ImageItem)?.let {
+                    listener.onLikeClick(it.id)
+                }
+            }
         }
 
         private val binding: ItemFeedBinding

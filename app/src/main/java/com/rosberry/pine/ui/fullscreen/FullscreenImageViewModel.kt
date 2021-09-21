@@ -40,6 +40,10 @@ class FullscreenImageViewModel @Inject constructor(router: Router) : BaseViewMod
         }
     }
 
+    fun like() {
+
+    }
+
     private suspend fun getBitmap(): Bitmap {
         return Picasso.get()
             .load(image?.rawImageUrl)

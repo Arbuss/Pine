@@ -79,6 +79,10 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
             shareImageUrl()
         }
 
+        binding?.likeButton?.setOnClickListener {
+            viewModel.like()
+        }
+
         binding?.imageName?.text = viewModel.image?.description
 
         setImage()
