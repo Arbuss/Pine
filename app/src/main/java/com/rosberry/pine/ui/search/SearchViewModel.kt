@@ -39,6 +39,7 @@ class SearchViewModel @Inject constructor(
         job = viewModelScope.launch(Dispatchers.IO) {
             if (lastQuery != query) {
                 currentPage = 0
+                photos.clear()
                 _clearImageListEvent.value = !_clearImageListEvent.value
                 withContext(Dispatchers.Main) {
                     _showLoading.emit(false)

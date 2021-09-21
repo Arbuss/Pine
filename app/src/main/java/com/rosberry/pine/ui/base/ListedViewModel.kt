@@ -12,6 +12,7 @@ import com.rosberry.pine.ui.image.ImageItem
 import com.rosberry.pine.ui.image.OnImageClickListener
 import com.rosberry.pine.util.BlurHashDecoder
 import com.rosberry.pine.util.FileUtil
+import com.rosberry.pine.util.ImageUtil
 import com.rosberry.pine.util.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -24,7 +25,7 @@ import java.io.File
 abstract class ListedViewModel(router: Router, private val imageInteractor: ImageInteractor) : BaseViewModel(router),
                                                                                                OnImageClickListener {
 
-    private val photos = mutableListOf<Image>()
+    protected val photos = mutableListOf<Image>()
 
     private var pagingJob: Job? = null
 
@@ -83,7 +84,9 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
                     image.urls.full,
                     image.urls.thumb,
                     image.urls.raw,
-                    image.description
+                    image.description,
+                    image.width,
+                    image.height
             )
             router.navigateTo(Screens.FullscreenImage(fullscreenImage))
         }
@@ -124,7 +127,7 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
 
     private suspend fun castImageToAdapterItem(image: Image): ImageItem {
         yield()
-        val (imageWidth, imageHeight) = calcImageSize(image.width, image.height)
+        val (imageWidth, imageHeight) = ImageUtil.calcImageSize(screenWidth!!, image.width, image.height)
 
         var blurHash: Bitmap? = null
 
@@ -150,13 +153,5 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
                 imageHeight,
                 blurHashUri,
                 image.isLiked)
-    }
-
-    private fun calcImageSize(width: Int, height: Int): Pair<Int, Int> {
-        val multiplier = width / screenWidth!! + 1
-
-        val imageWidth = screenWidth!!
-        val imageHeight = height / multiplier
-        return imageWidth to imageHeight
     }
 }
