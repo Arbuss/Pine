@@ -28,4 +28,7 @@ interface PhotosApi {
             @Query("page") page: Int,
             @Query("per_page") pageLength: Int
     ): Response<SearchedImages>
+
+    @GET("/photos/:id")
+    suspend fun getPhoto(@Query("id") id: String): Response<Image>
 }

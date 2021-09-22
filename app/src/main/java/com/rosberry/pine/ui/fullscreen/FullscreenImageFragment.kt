@@ -18,6 +18,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.rosberry.pine.R
+import com.rosberry.pine.data.repository.model.Image
 import com.rosberry.pine.databinding.FragmentImageBinding
 import com.rosberry.pine.extension.getScreenWidth
 import com.rosberry.pine.extension.share
@@ -48,7 +49,7 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
                 }
             }
 
-    constructor(image: FullscreenImage) : this() {
+    constructor(image: Image) : this() {
         arguments = bundleOf(
                 IMAGE_KEY to image
         )
@@ -94,13 +95,13 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
         val (width, height) = ImageUtil.calcImageSize(getScreenWidth(), viewModel.image!!.width,
                 viewModel.image!!.height)
         Picasso.get()
-            .load(viewModel.image?.thumbImageUrl)
+            .load(viewModel.image?.urls?.thumb)
             .noPlaceholder()
             .resize(width, height)
             .into(binding?.image, object : Callback {
                 override fun onSuccess() {
                     Picasso.get()
-                        .load(viewModel.image?.fullImageUrl)
+                        .load(viewModel.image?.urls?.raw)
                         .noPlaceholder()
                         .noFade()
                         .resize(width, height)

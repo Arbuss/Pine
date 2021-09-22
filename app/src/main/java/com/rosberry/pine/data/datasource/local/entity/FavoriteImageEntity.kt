@@ -7,5 +7,10 @@ import androidx.room.PrimaryKey
 data class FavoriteImageEntity(
         @PrimaryKey val id: String,
         val blurhash: String,
-        val fullImageUrl: String
+        val fullImageUrl: String,
+        val smallImageUrl: String,
+        val description: String?,
+        val width: Int,
+        val height: Int,
+        val timestamp: Long
 )

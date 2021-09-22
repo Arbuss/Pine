@@ -3,6 +3,8 @@ package com.rosberry.pine.ui.fullscreen
 import android.graphics.Bitmap
 import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
+import com.rosberry.pine.data.repository.model.Image
+import com.rosberry.pine.domain.FavoriteInteractor
 import com.rosberry.pine.ui.base.BaseViewModel
 import com.rosberry.pine.util.FileUtil
 import com.squareup.picasso.Picasso
@@ -15,9 +17,10 @@ import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
-class FullscreenImageViewModel @Inject constructor(router: Router) : BaseViewModel(router) {
+class FullscreenImageViewModel @Inject constructor(router: Router, private val favoriteInteractor: FavoriteInteractor) :
+        BaseViewModel(router) {
 
-    var image: FullscreenImage? = null
+    var image: Image? = null
 
     private val _bitmap = MutableStateFlow<Bitmap?>(null)
     val bitmap: StateFlow<Bitmap?> = _bitmap
@@ -41,12 +44,16 @@ class FullscreenImageViewModel @Inject constructor(router: Router) : BaseViewMod
     }
 
     fun like() {
-
+        image?.let { image ->
+            viewModelScope.launch(Dispatchers.IO) {
+                favoriteInteractor.like(image)
+            }
+        }
     }
 
     private suspend fun getBitmap(): Bitmap {
         return Picasso.get()
-            .load(image?.rawImageUrl)
+            .load(image?.urls?.raw)
             .config(Bitmap.Config.RGB_565)
             .get()
     }

@@ -79,16 +79,7 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
     override fun onImageClick(imageId: String) {
         val savedImage = photos.find { it.id == imageId }
         savedImage?.let { image ->
-            val fullscreenImage = FullscreenImage(
-                    image.id,
-                    image.urls.full,
-                    image.urls.thumb,
-                    image.urls.raw,
-                    image.description,
-                    image.width,
-                    image.height
-            )
-            router.navigateTo(Screens.FullscreenImage(fullscreenImage))
+            router.navigateTo(Screens.FullscreenImage(image))
         }
     }
 
