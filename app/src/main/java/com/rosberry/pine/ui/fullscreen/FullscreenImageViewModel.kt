@@ -46,7 +46,11 @@ class FullscreenImageViewModel @Inject constructor(router: Router, private val f
     fun like() {
         image?.let { image ->
             viewModelScope.launch(Dispatchers.IO) {
-                favoriteInteractor.like(image)
+                if(image.isLiked) {
+                    favoriteInteractor.unlike(image)
+                } else {
+                    favoriteInteractor.like(image)
+                }
             }
         }
     }
