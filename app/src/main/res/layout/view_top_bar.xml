@@ -17,7 +17,7 @@
         app:tint="?colorPrimary" />
 
     <TextView android:id="@+id/app_name"
-        style="@style/Title1B"
+        style="@style/Title"
         android:includeFontPadding="false"
         android:textColor="@color/app_title_color"
         android:layout_width="0dp"
