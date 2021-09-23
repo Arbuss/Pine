@@ -2,6 +2,7 @@ package com.rosberry.pine.ui.image
 
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.updateLayoutParams
@@ -128,6 +129,8 @@ class ImageAdapter(
             binding.like.setOnClickListener {
                 (items[layoutPosition] as? ImageItem)?.let {
                     listener.onLikeClick(it.id)
+                    items[layoutPosition] = it.copy(isLiked = !it.isLiked)
+                    setLikeState(items[layoutPosition] as ImageItem)
                 }
             }
         }
@@ -138,11 +141,7 @@ class ImageAdapter(
         fun bind(item: ImageItem) {
             binding.description.text = item.description
 
-            if (item.isLiked) {
-                binding.like.setImageResource(R.drawable.ic_liked)
-            } else {
-                binding.like.setImageResource(R.drawable.ic_unliked)
-            }
+            setLikeState(item)
 
             binding.root.updateLayoutParams {
                 width = item.width
@@ -158,6 +157,14 @@ class ImageAdapter(
                 } ?: run {
                     setImage(item, null)
                 }
+            }
+        }
+
+        private fun setLikeState(item: ImageItem) {
+            if (item.isLiked) {
+                binding.like.setImageResource(R.drawable.ic_liked)
+            } else {
+                binding.like.setImageResource(R.drawable.ic_unliked)
             }
         }
 

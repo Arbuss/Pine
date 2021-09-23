@@ -1,12 +1,13 @@
 package com.rosberry.pine.ui.base
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
 import com.rosberry.pine.data.repository.model.Image
+import com.rosberry.pine.domain.FavoriteInteractor
 import com.rosberry.pine.domain.ImageInteractor
 import com.rosberry.pine.navigation.Screens
-import com.rosberry.pine.ui.fullscreen.FullscreenImage
 import com.rosberry.pine.ui.image.ImageError
 import com.rosberry.pine.ui.image.ImageItem
 import com.rosberry.pine.ui.image.OnImageClickListener
@@ -22,8 +23,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import java.io.File
 
-abstract class ListedViewModel(router: Router, private val imageInteractor: ImageInteractor) : BaseViewModel(router),
-                                                                                               OnImageClickListener {
+abstract class ListedViewModel(
+        router: Router,
+        private val imageInteractor: ImageInteractor,
+        private val favoriteInteractor: FavoriteInteractor
+) : BaseViewModel(router),
+    OnImageClickListener {
 
     protected val photos = mutableListOf<Image>()
 
@@ -85,6 +90,29 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
 
     override fun onLikeClick(imageId: String) {
         val image = photos.find { it.id == imageId }
+        image?.let {
+            val index = photos.indexOf(image)
+            val newImage = if (image.isLiked) {
+                unlike(image)
+                image.copy(isLiked = false)
+            } else {
+                like(image)
+                image.copy(isLiked = true)
+            }
+            photos[index] = newImage
+        }
+    }
+
+    private fun like(image: Image) {
+        viewModelScope.launch(Dispatchers.IO) {
+            favoriteInteractor.like(image)
+        }
+    }
+
+    private fun unlike(image: Image) {
+        viewModelScope.launch(Dispatchers.IO) {
+            favoriteInteractor.unlike(image)
+        }
     }
 
     protected open fun getPage() {

@@ -6,6 +6,8 @@ import com.rosberry.pine.data.datasource.local.entity.SearchCacheEntity
 import com.rosberry.pine.data.datasource.remote.unsplash.PhotosApi
 import com.rosberry.pine.data.repository.model.Image
 import com.rosberry.pine.data.repository.model.Urls
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import retrofit2.Response
 import javax.inject.Inject
 
@@ -37,6 +39,12 @@ class ImageRepository @Inject constructor(private val api: PhotosApi, private va
         return database.favoriteImageDao()
             .getAll()
             .map { it.toImage() }
+    }
+
+    suspend fun getAllLikedImagesInFlow(): Flow<List<Image>> {
+        return database.favoriteImageDao()
+            .getAllInFlow()
+            .map { it.map { it.toImage() } }
     }
 
     suspend fun likeImage(image: Image) {

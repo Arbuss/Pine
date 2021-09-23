@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.rosberry.pine.data.datasource.local.entity.FavoriteImageEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FavoriteImageDao {
@@ -18,6 +19,9 @@ interface FavoriteImageDao {
 
     @Query("select * from FavoriteImage order by timestamp desc")
     fun getAll(): List<FavoriteImageEntity>
+
+    @Query("select * from FavoriteImage order by timestamp desc")
+    fun getAllInFlow(): Flow<List<FavoriteImageEntity>>
 
     @Query("select * from FavoriteImage where id = :id")
     fun get(id: String): List<FavoriteImageEntity>
