@@ -27,15 +27,13 @@
             app:tint="?colorPrimary" />
 
         <TextView android:id="@+id/image_name"
+            style="@style/Title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:ellipsize="end"
             android:includeFontPadding="false"
-            android:letterSpacing="0.019"
             android:maxLines="1"
-            android:textColor="@color/app_title_color"
-            android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="@id/back_button"
             app:layout_constraintEnd_toStartOf="@id/share_button"
             app:layout_constraintStart_toEndOf="@id/back_button"
