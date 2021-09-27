@@ -94,8 +94,10 @@ abstract class ListedFragment<VB : ViewBinding> : BaseFragment<VB>() {
                                     getString(R.string.error_server_body))
                         }
                         is ImageError.NothingFound -> {
-                            showError(getString(R.string.error_nothing_found_title),
-                                    getString(R.string.error_nothing_found_body))
+                            if(viewModel.imageListIsEmpty()) {
+                                showError(getString(R.string.error_nothing_found_title),
+                                        getString(R.string.error_nothing_found_body))
+                            }
                         }
                         is ImageError.NoError -> {
                             hideError()

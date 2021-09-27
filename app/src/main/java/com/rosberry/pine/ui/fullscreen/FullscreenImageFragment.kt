@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -172,22 +173,22 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
 
     private fun showDownloadProgress() {
         binding?.downloadProgressBar?.isVisible = true
-        binding?.downloadButton?.isVisible = false
+        binding?.downloadButton?.isInvisible = true
     }
 
     private fun hideDownloadProgress() {
         binding?.downloadProgressBar?.isVisible = false
-        binding?.downloadButton?.isVisible = true
+        binding?.downloadButton?.isInvisible = false
     }
 
     private fun showSharingProgress() {
         binding?.shareProgressBar?.isVisible = true
-        binding?.shareButton?.isVisible = false
+        binding?.shareButton?.isInvisible = true
     }
 
     private fun hideSharingProgress() {
         binding?.shareProgressBar?.isVisible = false
-        binding?.shareButton?.isVisible = true
+        binding?.shareButton?.isInvisible = false
     }
 
     private fun shareImageUrl() {

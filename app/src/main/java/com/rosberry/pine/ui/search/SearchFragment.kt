@@ -65,7 +65,11 @@ class SearchFragment : ListedFragment<FragmentSearchBinding>(), OnSearchItemClic
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        showKeyboard()
+        if(viewModel.imageListIsEmpty()) {
+            showKeyboard()
+        } else {
+            binding?.searchList?.isVisible = false
+        }
     }
 
     override fun onResume() {

@@ -148,6 +148,8 @@ abstract class ListedViewModel(
         }
     }
 
+    fun imageListIsEmpty() = photos.isNullOrEmpty()
+
     private suspend fun castImageToAdapterItem(image: Image): ImageItem {
         yield()
         val (imageWidth, imageHeight) = ImageUtil.calcImageSize(screenWidth!!, image.width, image.height)
