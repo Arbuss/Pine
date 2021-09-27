@@ -125,6 +125,8 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
         }
     }
 
+    fun imageListIsEmpty() = photos.isNullOrEmpty()
+
     private suspend fun castImageToAdapterItem(image: Image): ImageItem {
         yield()
         val (imageWidth, imageHeight) = ImageUtil.calcImageSize(screenWidth!!, image.width, image.height)
