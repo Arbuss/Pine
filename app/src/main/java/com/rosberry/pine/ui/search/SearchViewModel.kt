@@ -60,4 +60,6 @@ class SearchViewModel @Inject constructor(
                 .map { SearchItem(it) }
         }
     }
+
+    fun imageListIsEmpty() = _searchList.value.isNullOrEmpty()
 }
