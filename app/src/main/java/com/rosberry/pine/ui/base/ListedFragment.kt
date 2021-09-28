@@ -34,19 +34,18 @@ abstract class ListedFragment<VB : ViewBinding> : BaseFragment<VB>() {
     protected val errorBodyView: TextView?
         get() = feedViewBinding?.errorBody
 
-    protected val imageAdapter: ImageAdapter?
-        get() = imageList?.adapter as? ImageAdapter
+    protected val imageAdapter: ImageAdapter by lazy { ImageAdapter(viewModel) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel.loadNewPage()
         setObservers()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         feedViewBinding = ViewFeedBinding.bind(binding!!.root)
-        imageList?.adapter = ImageAdapter(viewModel)
-        imageAdapter?.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+        imageList?.adapter = imageAdapter
 
         viewModel.init(getScreenWidth(), context?.cacheDir)
 
@@ -94,7 +93,8 @@ abstract class ListedFragment<VB : ViewBinding> : BaseFragment<VB>() {
                                     getString(R.string.error_server_body))
                         }
                         is ImageError.NothingFound -> {
-                            if(viewModel.imageListIsEmpty()) {
+                            viewModel.nothingFoundHappened = true
+                            if (viewModel.imageListIsEmpty()) {
                                 showError(getString(R.string.error_nothing_found_title),
                                         getString(R.string.error_nothing_found_body))
                             }
@@ -111,8 +111,14 @@ abstract class ListedFragment<VB : ViewBinding> : BaseFragment<VB>() {
     protected open fun setPagingObservers() {
         lifecycleScope.launch(Dispatchers.Main) {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
-                viewModel.newPage.collect { newPage ->
-                    imageAdapter?.addItems(newPage)
+                viewModel.images.collect {
+                    if (it.isNotEmpty()) {
+                        imageAdapter.addItems(it)
+                    } else {
+                        if (viewModel.imageListIsEmpty()) {
+                            imageAdapter.setItems(it)
+                        }
+                    }
                 }
             }
         }
@@ -121,11 +127,11 @@ abstract class ListedFragment<VB : ViewBinding> : BaseFragment<VB>() {
     protected open fun setLoadingObservers() {
         lifecycleScope.launch(Dispatchers.Main) {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
-                viewModel.showLoading.collect { isLoading ->
+                viewModel.isLoading.collect { isLoading ->
                     if (isLoading) {
-                        imageAdapter?.startProgressBar()
+                        imageAdapter.startProgressBar()
                     } else {
-                        imageAdapter?.stopProgressBar()
+                        imageAdapter.stopProgressBar()
                     }
                 }
             }
@@ -147,7 +153,7 @@ abstract class ListedFragment<VB : ViewBinding> : BaseFragment<VB>() {
                 super.onScrolled(recyclerView, dx, dy)
                 val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                 val lastVisiblePosition = layoutManager.findLastVisibleItemPosition()
-                val adapterItemsCount = imageAdapter?.itemCount ?: 0
+                val adapterItemsCount = imageAdapter.itemCount
                 if (lastVisiblePosition >= 0 && lastVisiblePosition + 4 >= adapterItemsCount) {
                     onImageListEnded()
                 }

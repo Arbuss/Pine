@@ -29,19 +29,16 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
 
     private var pagingJob: Job? = null
 
-    protected val _newPage = MutableStateFlow(listOf<ImageItem>())
-    val newPage: StateFlow<List<ImageItem>> = _newPage
+    protected val _images = MutableStateFlow(listOf<ImageItem>())
+    val images: StateFlow<List<ImageItem>> = _images
 
     protected val _error = MutableStateFlow<ImageError>(ImageError.NoError())
     val error: StateFlow<ImageError> = _error
 
-    protected val _showLoading = MutableStateFlow(false)
-    val showLoading: StateFlow<Boolean> = _showLoading
+    protected val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
 
-    protected val _clearImageListEvent = MutableStateFlow(false)
-    val clearImageListEvent: StateFlow<Boolean> = _clearImageListEvent
-
-    protected var isLoading = false
+    var nothingFoundHappened = false
 
     private var screenWidth: Int? = null
     private var cacheDir: File? = null
@@ -49,31 +46,21 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
     var currentPage: Int = 0
         protected set
 
-    init {
-        loadNewPage()
-    }
-
     open fun init(screenWidth: Int, cacheDir: File?) {
         this.screenWidth = screenWidth
         this.cacheDir = cacheDir
-        viewModelScope.launch(Dispatchers.IO) {
-            _newPage.value = emptyList()
-            val items = photos.map { castImageToAdapterItem(it) }
-            _newPage.value = items
-        }
     }
 
     open fun loadNewPage() {
-        if (!isLoading) {
+        if (!isLoading.value) {
             getPage()
-            isLoading = true
-            _showLoading.value = true
+            _isLoading.value = true
         }
     }
 
     fun onPause() {
         pagingJob?.cancel()
-        isLoading = false
+        _isLoading.value = false
     }
 
     override fun onImageClick(imageId: String) {
@@ -109,23 +96,21 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
                     .map { castImageToAdapterItem(it) }
                     .toMutableList()
 
-                _newPage.value = resultList
+                _images.value = _images.value + resultList
                 photos.addAll(rawList)
                 currentPage++
-                isLoading = false
-                _showLoading.value = false
+                _isLoading.value = false
 
                 _error.value = ImageError.NoError()
             }
             is Resource.Error -> {
-                isLoading = false
-                _showLoading.value = false
+                _isLoading.value = false
                 _error.value = resource.exception as ImageError
             }
         }
     }
 
-    fun imageListIsEmpty() = photos.isNullOrEmpty()
+    fun imageListIsEmpty() = images.value.isNullOrEmpty()
 
     private suspend fun castImageToAdapterItem(image: Image): ImageItem {
         yield()
@@ -134,7 +119,7 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
         var blurHash: Bitmap? = null
 
         if (cacheDir != null && !FileUtil.isFileExist(cacheDir!!, image.id)) {
-            blurHash = BlurHashDecoder.decode(image.blurHash, screenWidth!! / 20, imageHeight / 20,
+            blurHash = BlurHashDecoder.decode(image.blurHash, screenWidth!!, imageHeight,
                     bitmapConfig = Bitmap.Config.RGB_565)
         }
 

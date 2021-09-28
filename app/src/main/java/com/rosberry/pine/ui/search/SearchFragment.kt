@@ -75,19 +75,18 @@ class SearchFragment : ListedFragment<FragmentSearchBinding>(), OnSearchItemClic
     override fun onResume() {
         super.onResume()
         requireActivity().window.setBackgroundDrawableResource(
-                R.color.background_color) // TODO возможно что-нибудь другое придумать
+                R.color.background_color)
     }
 
     override fun onPause() {
         super.onPause()
         requireActivity().window.setBackgroundDrawableResource(
-                R.drawable.d_logo_pine_black_nine_patch) // TODO возможно что-нибудь другое придумать
+                R.drawable.d_logo_pine_black_nine_patch)
     }
 
     override fun setObservers() {
         super.setObservers()
         setSearchListObserver()
-        setClearListObserver()
     }
 
     private fun setSearchListObserver() {
@@ -95,16 +94,6 @@ class SearchFragment : ListedFragment<FragmentSearchBinding>(), OnSearchItemClic
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.searchList.collect {
                     (binding?.searchList?.adapter as? SearchHistoryAdapter)?.addItems(it)
-                }
-            }
-        }
-    }
-
-    private fun setClearListObserver() {
-        lifecycleScope.launch(Dispatchers.Main) {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.clearImageListEvent.collect {
-                    imageAdapter?.clear()
                 }
             }
         }
