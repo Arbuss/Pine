@@ -96,7 +96,7 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
                     .map { castImageToAdapterItem(it) }
                     .toMutableList()
 
-                _images.value = _images.value + resultList
+                _images.value = (_images.value + resultList).distinct()
                 photos.addAll(rawList)
                 currentPage++
                 _isLoading.value = false
