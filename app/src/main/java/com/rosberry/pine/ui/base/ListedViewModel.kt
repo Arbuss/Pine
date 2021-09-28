@@ -119,7 +119,7 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
         var blurHash: Bitmap? = null
 
         if (cacheDir != null && !FileUtil.isFileExist(cacheDir!!, image.id)) {
-            blurHash = BlurHashDecoder.decode(image.blurHash, screenWidth!!, imageHeight,
+            blurHash = BlurHashDecoder.decode(image.blurHash, screenWidth!! / 20, imageHeight / 20,
                     bitmapConfig = Bitmap.Config.RGB_565)
         }
 
