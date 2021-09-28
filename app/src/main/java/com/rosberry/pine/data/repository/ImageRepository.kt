@@ -14,13 +14,14 @@ import javax.inject.Inject
 class ImageRepository @Inject constructor(private val api: PhotosApi, private val database: AppDatabase) {
 
     suspend fun getPage(page: Int, pageLength: Int): List<Image> {
-        return handleResponse(api.getPage(page, pageLength)).map { image ->
-            if (isImageLiked(image.id)) { // TODO сомнительное с точки зрения производительности место. Посоветоваться
-                image.copy(isLiked = true)
-            } else {
-                image
-            }
-        }
+        return handleResponse(api.getPage(page, pageLength))
+//            .map { image ->
+//            if (isImageLiked(image.id)) { // TODO сомнительное с точки зрения производительности место. Посоветоваться
+//                image.copy(isLiked = true)
+//            } else {
+//                image
+//            }
+//        }
     }
 
     suspend fun searchPage(query: String, page: Int, pageSize: Int): List<Image> {
@@ -41,7 +42,7 @@ class ImageRepository @Inject constructor(private val api: PhotosApi, private va
             .map { it.toImage() }
     }
 
-    suspend fun getAllLikedImagesInFlow(): Flow<List<Image>> {
+    fun getAllLikedImagesInFlow(): Flow<List<Image>> {
         return database.favoriteImageDao()
             .getAllInFlow()
             .map { it.map { it.toImage() } }

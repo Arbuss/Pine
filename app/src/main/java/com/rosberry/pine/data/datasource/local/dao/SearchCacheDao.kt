@@ -10,8 +10,8 @@ import com.rosberry.pine.data.datasource.local.entity.SearchCacheEntity
 interface SearchCacheDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(item: SearchCacheEntity)
+    suspend fun insert(item: SearchCacheEntity)
 
     @Query("select * from SearchCache order by timestamp desc limit :limit")
-    fun getLastSearchQueries(limit: Int): List<SearchCacheEntity>
+    suspend fun getLastSearchQueries(limit: Int): List<SearchCacheEntity>
 }

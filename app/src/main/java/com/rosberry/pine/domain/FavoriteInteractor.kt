@@ -19,7 +19,7 @@ class FavoriteInteractor @Inject constructor(private val imageRepository: ImageR
         return imageRepository.getAllLikedImages()
     }
 
-    suspend fun getAllLikedImagesInFlow(): Flow<List<Image>> {
+    fun getAllLikedImagesInFlow(): Flow<List<Image>> {
         return imageRepository.getAllLikedImagesInFlow()
     }
 }
