@@ -1,7 +1,6 @@
 package com.rosberry.pine.ui.base
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
 import com.rosberry.pine.data.repository.model.Image
@@ -19,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import java.io.File
@@ -42,6 +42,8 @@ abstract class ListedViewModel(
 
     protected val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
+
+    val favoriteImages = favoriteInteractor.getAllLikedImagesInFlow()
 
     var nothingFoundHappened = false
 
@@ -99,6 +101,20 @@ abstract class ListedViewModel(
     private fun unlike(image: Image) {
         viewModelScope.launch(Dispatchers.IO) {
             favoriteInteractor.unlike(image)
+        }
+    }
+
+    fun observeLiked() {
+        viewModelScope.launch(Dispatchers.IO) {
+            favoriteImages.collect { favoriteList ->
+                val tempList = mutableListOf<ImageItem>()
+                photos.forEach { image ->
+                    // TODO оптимизировать
+                    tempList.add(castImageToAdapterItem(image.copy(isLiked = favoriteList.contains(image))))
+                }
+
+                _images.value = tempList
+            }
         }
     }
 

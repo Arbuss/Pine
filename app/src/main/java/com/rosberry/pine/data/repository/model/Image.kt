@@ -15,4 +15,14 @@ data class Image(
         val height: Int,
         @SerializedName("blur_hash") val blurHash: String,
         @SerializedName("liked_by_user") val isLiked: Boolean
-): Parcelable
+): Parcelable {
+
+    override fun equals(other: Any?): Boolean {
+        val isEquals = super.equals(other)
+        if(other is Image) {
+            return id == other.id
+        } else {
+            return isEquals
+        }
+    }
+}

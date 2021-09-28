@@ -1,6 +1,7 @@
 package com.rosberry.pine.ui.base
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,6 +39,7 @@ abstract class ListedFragment<VB : ViewBinding> : BaseFragment<VB>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel.observeLiked()
         viewModel.loadNewPage()
         setObservers()
     }
@@ -112,13 +114,8 @@ abstract class ListedFragment<VB : ViewBinding> : BaseFragment<VB>() {
         lifecycleScope.launch(Dispatchers.Main) {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.images.collect {
-                    if (it.isNotEmpty()) {
-                        imageAdapter.addItems(it)
-                    } else {
-                        if (viewModel.imageListIsEmpty()) {
-                            imageAdapter.setItems(it)
-                        }
-                    }
+                    Log.d("#Favorites", "collect")
+                    imageAdapter.setItems(it)
                 }
             }
         }

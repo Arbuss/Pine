@@ -46,25 +46,15 @@ class ImageAdapter(
         }
     }
 
-    fun addItems(newItems: List<ImageItem>) {
-        if (hasProgress()) {
-            stopProgressBar()
-        }
-        val diffUtilCallback = ImageDiffUtilCallback((items + newItems) as List<ImageItem>)
-        val diffResult = DiffUtil.calculateDiff(diffUtilCallback)
-        val oldItems = items.toList()
-        items.clear()
-        items.addAll(oldItems + newItems)
-        diffResult.dispatchUpdatesTo(this)
-    }
-
     fun setItems(newItems: List<ImageItem>) {
         if (hasProgress()) {
             stopProgressBar()
         }
+        val diffUtilCallback = ImageDiffUtilCallback(newItems)
+        val diffResult = DiffUtil.calculateDiff(diffUtilCallback)
         items.clear()
         items.addAll(newItems)
-        notifyDataSetChanged()
+        diffResult.dispatchUpdatesTo(this)
     }
 
     fun hasProgress() = items.any { it is ProgressItem }
