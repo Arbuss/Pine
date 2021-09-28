@@ -46,11 +46,6 @@ class ImageAdapter(
         }
     }
 
-    fun clear() {
-        items.clear()
-        notifyDataSetChanged()
-    }
-
     fun addItems(newItems: List<ImageItem>) {
         if (hasProgress()) {
             stopProgressBar()
