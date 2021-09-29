@@ -19,6 +19,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.rosberry.pine.R
+import com.rosberry.pine.data.repository.model.Image
 import com.rosberry.pine.databinding.FragmentImageBinding
 import com.rosberry.pine.extension.getScreenWidth
 import com.rosberry.pine.extension.share
@@ -49,7 +50,7 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
                 }
             }
 
-    constructor(image: FullscreenImage) : this() {
+    constructor(image: Image) : this() {
         arguments = bundleOf(
                 IMAGE_KEY to image
         )
@@ -57,8 +58,10 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel.image = requireArguments().getParcelable(IMAGE_KEY)
         setDownloadingObserver()
         setSharingObserver()
+        setLikeObserver()
     }
 
     override fun createViewBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentImageBinding? =
@@ -66,7 +69,6 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-        viewModel.image = requireArguments().getParcelable(IMAGE_KEY)
 
         binding?.backButton?.setOnClickListener {
             viewModel.onBackPressed()
@@ -80,6 +82,10 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
             shareImageUrl()
         }
 
+        binding?.likeButton?.setOnClickListener {
+            viewModel.like()
+        }
+
         binding?.imageName?.text = viewModel.image?.description
 
         setImage()
@@ -91,14 +97,14 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
         val (width, height) = ImageUtil.calcImageSize(getScreenWidth(), viewModel.image!!.width,
                 viewModel.image!!.height)
         Picasso.get()
-            .load(viewModel.image?.thumbImageUrl)
+            .load(viewModel.image?.urls?.thumb)
             .noPlaceholder()
             .resize(width, height)
             .into(binding?.image, object : Callback {
                 override fun onSuccess() {
                     binding?.image?.let { targetView ->
                         Picasso.get()
-                            .load(viewModel.image?.fullImageUrl)
+                            .load(viewModel.image?.urls?.raw)
                             .noPlaceholder()
                             .noFade()
                             .resize(width, height)
@@ -135,6 +141,17 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
                         share(address, context)
                         hideSharingProgress()
                     }
+                }
+            }
+        }
+    }
+
+    private fun setLikeObserver() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                viewModel.imageIsLiked.collect { isLiked ->
+                    binding?.likeButton?.setImageDrawable(ContextCompat.getDrawable(requireContext(),
+                            if (isLiked) R.drawable.ic_liked_black else R.drawable.ic_unliked_black))
                 }
             }
         }

@@ -1,9 +1,13 @@
 package com.rosberry.pine.data.repository
 
 import com.rosberry.pine.data.datasource.local.AppDatabase
+import com.rosberry.pine.data.datasource.local.entity.FavoriteImageEntity
 import com.rosberry.pine.data.datasource.local.entity.SearchCacheEntity
 import com.rosberry.pine.data.datasource.remote.unsplash.PhotosApi
 import com.rosberry.pine.data.repository.model.Image
+import com.rosberry.pine.data.repository.model.Urls
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import retrofit2.Response
 import javax.inject.Inject
 
@@ -25,6 +29,33 @@ class ImageRepository @Inject constructor(private val api: PhotosApi, private va
         return database.searchCacheDao()
             .getLastSearchQueries(count)
             .map { it.query }
+    }
+
+    suspend fun getAllLikedImages(): List<Image> {
+        return database.favoriteImageDao()
+            .getAll()
+            .map { it.toImage() }
+    }
+
+    fun getAllLikedImagesInFlow(): Flow<List<Image>> {
+        return database.favoriteImageDao()
+            .getAllInFlow()
+            .map { it.map { it.toImage() } }
+    }
+
+    suspend fun likeImage(image: Image) {
+        database.favoriteImageDao()
+            .insert(image.toEntity(System.currentTimeMillis()))
+    }
+
+    suspend fun unlikeImage(image: Image) {
+        database.favoriteImageDao()
+            .delete(image.toEntity(System.currentTimeMillis()))
+    }
+
+    private suspend fun isImageLiked(id: String): Boolean {
+        val dbItem = database.favoriteImageDao().get(id)
+        return dbItem.isNotEmpty()
     }
 
     private fun <T> handleResponse(response: Response<T>): T {
@@ -61,4 +92,12 @@ class ImageRepository @Inject constructor(private val api: PhotosApi, private va
             RepositoryError.UnknownError()
         }
     }
+
+    private fun Image.toEntity(timestamp: Long): FavoriteImageEntity =
+            FavoriteImageEntity(id, blurHash, urls.full, urls.small,
+                    description, width, height, timestamp)
+
+    private fun FavoriteImageEntity.toImage(): Image = Image(id, description,
+            Urls("", fullImageUrl, "", smallImageUrl, ""),
+            width, height, blurhash, isLiked = true)
 }

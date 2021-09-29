@@ -2,6 +2,7 @@ package com.rosberry.pine.ui.search
 
 import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
+import com.rosberry.pine.domain.FavoriteInteractor
 import com.rosberry.pine.domain.ImageInteractor
 import com.rosberry.pine.domain.SearchInteractor
 import com.rosberry.pine.ui.base.ListedViewModel
@@ -18,8 +19,9 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(
         router: Router,
         private val searchInteractor: SearchInteractor,
-        imageInteractor: ImageInteractor
-) : ListedViewModel(router, imageInteractor) {
+        imageInteractor: ImageInteractor,
+        favoriteInteractor: FavoriteInteractor
+) : ListedViewModel(router, imageInteractor, favoriteInteractor) {
 
     private var job: Job? = null
 

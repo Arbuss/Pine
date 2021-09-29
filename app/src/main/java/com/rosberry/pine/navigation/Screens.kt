@@ -1,6 +1,7 @@
 package com.rosberry.pine.navigation
 
 import com.github.terrakok.cicerone.androidx.FragmentScreen
+import com.rosberry.pine.data.repository.model.Image
 import com.rosberry.pine.ui.fullscreen.FullscreenImage
 import com.rosberry.pine.ui.fullscreen.FullscreenImageFragment
 import com.rosberry.pine.ui.main.MainFragment
@@ -15,5 +16,5 @@ object Screens {
 
     val Search get() = FragmentScreen { SearchFragment() }
 
-    fun FullscreenImage(image: FullscreenImage) = FragmentScreen { FullscreenImageFragment(image) }
+    fun FullscreenImage(image: Image) = FragmentScreen { FullscreenImageFragment(image) }
 }

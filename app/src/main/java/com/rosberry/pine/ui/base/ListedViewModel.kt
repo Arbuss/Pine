@@ -4,9 +4,9 @@ import android.graphics.Bitmap
 import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
 import com.rosberry.pine.data.repository.model.Image
+import com.rosberry.pine.domain.FavoriteInteractor
 import com.rosberry.pine.domain.ImageInteractor
 import com.rosberry.pine.navigation.Screens
-import com.rosberry.pine.ui.fullscreen.FullscreenImage
 import com.rosberry.pine.ui.image.ImageError
 import com.rosberry.pine.ui.image.ImageItem
 import com.rosberry.pine.ui.image.OnImageClickListener
@@ -18,12 +18,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import java.io.File
 
-abstract class ListedViewModel(router: Router, private val imageInteractor: ImageInteractor) : BaseViewModel(router),
-                                                                                               OnImageClickListener {
+abstract class ListedViewModel(
+        router: Router,
+        private val imageInteractor: ImageInteractor,
+        private val favoriteInteractor: FavoriteInteractor
+) : BaseViewModel(router),
+    OnImageClickListener {
 
     protected val photos = mutableListOf<Image>()
 
@@ -37,6 +43,8 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
 
     protected val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
+
+    val favoriteImages = favoriteInteractor.getAllLikedImagesInFlow()
 
     protected var nothingFoundHappened = false
 
@@ -66,16 +74,52 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
     override fun onImageClick(imageId: String) {
         val savedImage = photos.find { it.id == imageId }
         savedImage?.let { image ->
-            val fullscreenImage = FullscreenImage(
-                    image.id,
-                    image.urls.full,
-                    image.urls.thumb,
-                    image.urls.raw,
-                    image.description,
-                    image.width,
-                    image.height
-            )
-            router.navigateTo(Screens.FullscreenImage(fullscreenImage))
+            router.navigateTo(Screens.FullscreenImage(image))
+        }
+    }
+
+    override fun onLikeClick(imageId: String) {
+        val image = photos.find { it.id == imageId }
+        image?.let {
+            val index = photos.indexOf(image)
+            val newImage = if (image.isLiked) {
+                unlike(image)
+                image.copy(isLiked = false)
+            } else {
+                like(image)
+                image.copy(isLiked = true)
+            }
+            photos[index] = newImage
+        }
+    }
+
+    private fun like(image: Image) {
+        viewModelScope.launch(Dispatchers.IO) {
+            favoriteInteractor.like(image)
+        }
+    }
+
+    private fun unlike(image: Image) {
+        viewModelScope.launch(Dispatchers.IO) {
+            favoriteInteractor.unlike(image)
+        }
+    }
+
+    fun observeFavorites() {
+        viewModelScope.launch(Dispatchers.IO) {
+            favoriteImages.collect { favoriteList ->
+                val tempListForAdapter = mutableListOf<ImageItem>()
+                val tempListForViewModel = mutableListOf<Image>()
+                photos.map { image ->
+                    // TODO оптимизировать
+                    val newImage = image.copy(isLiked = favoriteList.contains(image))
+                    tempListForAdapter.add(castImageToAdapterItem(newImage))
+                    tempListForViewModel.add(newImage)
+                }
+                photos.clear()
+                photos.addAll(tempListForViewModel)
+                _images.value = tempListForAdapter
+            }
         }
     }
 
@@ -148,6 +192,7 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
                 imageWidth,
                 imageHeight,
                 blurHashUri,
-                image.isLiked)
+                favoriteImages.first()
+                    .any { favoriteImage -> favoriteImage.id == image.id })
     }
 }

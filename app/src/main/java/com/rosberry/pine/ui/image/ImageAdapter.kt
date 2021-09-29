@@ -2,6 +2,7 @@ package com.rosberry.pine.ui.image
 
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.updateLayoutParams
@@ -45,25 +46,15 @@ class ImageAdapter(
         }
     }
 
-    fun addItems(newItems: List<ImageItem>) {
-        if (hasProgress()) {
-            stopProgressBar()
-        }
-        val diffUtilCallback = ImageDiffUtilCallback((items + newItems) as List<ImageItem>)
-        val diffResult = DiffUtil.calculateDiff(diffUtilCallback)
-        val oldItems = items.toList()
-        items.clear()
-        items.addAll(oldItems + newItems)
-        diffResult.dispatchUpdatesTo(this)
-    }
-
     fun setItems(newItems: List<ImageItem>) {
         if (hasProgress()) {
             stopProgressBar()
         }
+        val diffUtilCallback = ImageDiffUtilCallback(newItems)
+        val diffResult = DiffUtil.calculateDiff(diffUtilCallback)
         items.clear()
         items.addAll(newItems)
-        notifyDataSetChanged()
+        diffResult.dispatchUpdatesTo(this)
     }
 
     fun hasProgress() = items.any { it is ProgressItem }
@@ -120,6 +111,13 @@ class ImageAdapter(
                     listener.onImageClick(it.id)
                 }
             }
+            binding.like.setOnClickListener {
+                (items[layoutPosition] as? ImageItem)?.let {
+                    listener.onLikeClick(it.id)
+                    items[layoutPosition] = it.copy(isLiked = !it.isLiked)
+                    setLikeState(items[layoutPosition] as ImageItem)
+                }
+            }
         }
 
         private val binding: ItemFeedBinding
@@ -128,11 +126,7 @@ class ImageAdapter(
         fun bind(item: ImageItem) {
             binding.description.text = item.description
 
-            if (item.isLiked) {
-                binding.like.setImageResource(R.drawable.ic_liked)
-            } else {
-                binding.like.setImageResource(R.drawable.ic_unliked)
-            }
+            setLikeState(item)
 
             binding.root.updateLayoutParams {
                 width = item.width
@@ -148,6 +142,14 @@ class ImageAdapter(
                 } ?: run {
                     setImage(item, null)
                 }
+            }
+        }
+
+        private fun setLikeState(item: ImageItem) {
+            if (item.isLiked) {
+                binding.like.setImageResource(R.drawable.ic_liked)
+            } else {
+                binding.like.setImageResource(R.drawable.ic_unliked)
             }
         }
 
