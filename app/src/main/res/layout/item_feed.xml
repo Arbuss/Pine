@@ -24,23 +24,24 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <TextView android:id="@+id/description"
+            style="@style/Subtitle1B"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            style="@style/Subtitle1B"
-            android:layout_marginStart="16dp"
-            android:layout_marginVertical="16dp"
             android:layout_gravity="center"
+            android:layout_marginVertical="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_weight="1"
             tools:text="Good dog" />
 
         <ImageButton android:id="@+id/like"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="12dp"
-            android:layout_marginStart="44dp"
             android:layout_gravity="center"
-            tools:src="@drawable/ic_unliked"
-            android:background="@android:color/transparent"/>
+            android:layout_marginStart="32dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/feed_fragment_content_description_like"
+            android:padding="12dp"
+            tools:src="@drawable/ic_unliked" />
     </LinearLayout>
 
 

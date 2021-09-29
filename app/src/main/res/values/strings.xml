@@ -39,4 +39,7 @@
     <string name="fullscreen_image_fragment_content_description_share_button">Share Button</string>
     <string name="fullscreen_image_fragment_content_description_download_button">Download Button</string>
 
+    <!-- Feed -->
+    <string name="feed_fragment_content_description_like">Like</string>
+
 </resources>

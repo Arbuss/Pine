@@ -15,13 +15,6 @@ class ImageRepository @Inject constructor(private val api: PhotosApi, private va
 
     suspend fun getPage(page: Int, pageLength: Int): List<Image> {
         return handleResponse(api.getPage(page, pageLength))
-//            .map { image ->
-//            if (isImageLiked(image.id)) { // TODO сомнительное с точки зрения производительности место. Посоветоваться
-//                image.copy(isLiked = true)
-//            } else {
-//                image
-//            }
-//        }
     }
 
     suspend fun searchPage(query: String, page: Int, pageSize: Int): List<Image> {
