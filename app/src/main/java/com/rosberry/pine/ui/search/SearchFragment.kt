@@ -35,6 +35,9 @@ class SearchFragment : ListedFragment<FragmentSearchBinding>(), OnSearchItemClic
 
         binding?.clearButton?.setOnClickListener {
             binding?.searchField?.editableText?.clear()
+            onSearchFieldFocusChanged(true)
+            showKeyboard()
+            viewModel.clearList()
         }
 
         binding?.backButton?.setOnClickListener {
@@ -119,8 +122,8 @@ class SearchFragment : ListedFragment<FragmentSearchBinding>(), OnSearchItemClic
     }
 
     override fun onItemClicked(query: String) {
-        binding?.searchField?.clearFocus()
         binding?.searchField?.setText(query)
+        binding?.searchField?.clearFocus()
         viewModel.search(query)
         hideKeyboard()
     }

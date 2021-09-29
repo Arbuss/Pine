@@ -36,6 +36,10 @@ class SearchViewModel @Inject constructor(
         }
     }
 
+    fun clearList() {
+        photos.clear()
+    }
+
     fun search(query: String) {
         nothingFoundHappened = false
         job?.cancel()

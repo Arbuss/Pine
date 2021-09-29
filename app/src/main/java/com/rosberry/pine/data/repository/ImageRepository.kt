@@ -25,8 +25,10 @@ class ImageRepository @Inject constructor(private val api: PhotosApi, private va
     }
 
     suspend fun searchPage(query: String, page: Int, pageSize: Int): List<Image> {
-        database.searchCacheDao()
-            .insert(SearchCacheEntity(query, System.currentTimeMillis()))
+        if(query.isNotEmpty()) {
+            database.searchCacheDao()
+                .insert(SearchCacheEntity(query, System.currentTimeMillis()))
+        }
         return handleResponse(api.searchPage(query, page, pageSize)).results
     }
 
