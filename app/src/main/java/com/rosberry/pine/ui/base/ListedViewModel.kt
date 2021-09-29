@@ -38,7 +38,7 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
     protected val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    var nothingFoundHappened = false
+    protected var nothingFoundHappened = false
 
     private var screenWidth: Int? = null
     private var cacheDir: File? = null
@@ -105,7 +105,16 @@ abstract class ListedViewModel(router: Router, private val imageInteractor: Imag
             }
             is Resource.Error -> {
                 _isLoading.value = false
-                _error.value = resource.exception as ImageError
+                val exception = resource.exception as ImageError
+
+                if (exception is ImageError.NothingFound) {
+                    nothingFoundHappened = true
+                    if (imageListIsEmpty()) {
+                        _error.value = exception
+                    }
+                } else {
+                    _error.value = exception
+                }
             }
         }
     }
