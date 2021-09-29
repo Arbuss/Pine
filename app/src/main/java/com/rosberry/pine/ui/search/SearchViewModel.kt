@@ -29,7 +29,7 @@ class SearchViewModel @Inject constructor(
     var lastQuery: String? = null
 
     override fun loadNewPage() {
-        if (!isLoading && lastQuery != null) {
+        if (!isLoading.value && lastQuery != null && !nothingFoundHappened) {
             search(lastQuery ?: "")
         }
     }
@@ -39,21 +39,20 @@ class SearchViewModel @Inject constructor(
     }
 
     fun search(query: String) {
+        nothingFoundHappened = false
         job?.cancel()
         job = viewModelScope.launch(Dispatchers.IO) {
             if (lastQuery != query) {
                 currentPage = 0
                 photos.clear()
-                _clearImageListEvent.value = !_clearImageListEvent.value
+                _images.value = emptyList()
                 withContext(Dispatchers.Main) {
-                    _showLoading.emit(false)
-                    isLoading = false
+                    _isLoading.value = false
                 }
             }
             lastQuery = query
 
-            isLoading = true
-            _showLoading.value = true
+            _isLoading.value = true
             responseResultHandling(searchInteractor.getSearchResult(query.trim(), currentPage + 1, 10))
         }
     }

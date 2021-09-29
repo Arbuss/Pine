@@ -11,7 +11,7 @@ import com.google.android.material.snackbar.Snackbar
 
 abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
-    protected var binding: VB? = null // TODO попробовать создавать его тут
+    protected var binding: VB? = null
 
     abstract fun createViewBinding(
             inflater: LayoutInflater,
