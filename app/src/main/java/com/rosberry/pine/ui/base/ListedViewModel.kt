@@ -108,12 +108,17 @@ abstract class ListedViewModel(
     fun observeFavorites() {
         viewModelScope.launch(Dispatchers.IO) {
             favoriteImages.collect { favoriteList ->
-                val tempList = mutableListOf<ImageItem>()
-                photos.forEach { image ->
+                val tempListForAdapter = mutableListOf<ImageItem>()
+                val tempListForViewModel = mutableListOf<Image>()
+                photos.map { image ->
                     // TODO оптимизировать
-                    tempList.add(castImageToAdapterItem(image.copy(isLiked = favoriteList.contains(image))))
+                    val newImage = image.copy(isLiked = favoriteList.contains(image))
+                    tempListForAdapter.add(castImageToAdapterItem(newImage))
+                    tempListForViewModel.add(newImage)
                 }
-                _images.value = tempList
+                photos.clear()
+                photos.addAll(tempListForViewModel)
+                _images.value = tempListForAdapter
             }
         }
     }

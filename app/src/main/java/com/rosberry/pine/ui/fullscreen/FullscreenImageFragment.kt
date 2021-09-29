@@ -58,8 +58,10 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel.image = requireArguments().getParcelable(IMAGE_KEY)
         setDownloadingObserver()
         setSharingObserver()
+        setLikeObserver()
     }
 
     override fun createViewBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentImageBinding? =
@@ -67,7 +69,6 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-        viewModel.image = requireArguments().getParcelable(IMAGE_KEY)
 
         binding?.backButton?.setOnClickListener {
             viewModel.onBackPressed()
@@ -138,6 +139,17 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
                         share(address, context)
                         hideSharingProgress()
                     }
+                }
+            }
+        }
+    }
+
+    private fun setLikeObserver() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                viewModel.imageIsLiked.collect { isLiked ->
+                    binding?.likeButton?.setImageDrawable(ContextCompat.getDrawable(requireContext(),
+                            if (isLiked) R.drawable.ic_liked_black else R.drawable.ic_unliked_black))
                 }
             }
         }

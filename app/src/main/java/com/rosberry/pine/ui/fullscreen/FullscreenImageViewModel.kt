@@ -17,10 +17,20 @@ import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
-class FullscreenImageViewModel @Inject constructor(router: Router, private val favoriteInteractor: FavoriteInteractor) :
+class FullscreenImageViewModel @Inject constructor(
+        router: Router,
+        private val favoriteInteractor: FavoriteInteractor
+) :
         BaseViewModel(router) {
 
     var image: Image? = null
+        set(value) {
+            _imageIsLiked.value = value?.isLiked ?: false
+            field = value
+        }
+
+    private val _imageIsLiked = MutableStateFlow(false)
+    val imageIsLiked: StateFlow<Boolean> = _imageIsLiked
 
     private val _bitmap = MutableStateFlow<Bitmap?>(null)
     val bitmap: StateFlow<Bitmap?> = _bitmap
@@ -46,10 +56,12 @@ class FullscreenImageViewModel @Inject constructor(router: Router, private val f
     fun like() {
         image?.let { image ->
             viewModelScope.launch(Dispatchers.IO) {
-                if(image.isLiked) {
+                this@FullscreenImageViewModel.image = if (image.isLiked) {
                     favoriteInteractor.unlike(image)
+                    image.copy(isLiked = false)
                 } else {
                     favoriteInteractor.like(image)
+                    image.copy(isLiked = true)
                 }
             }
         }
