@@ -96,12 +96,14 @@ class FullscreenImageFragment() : BaseFragment<FragmentImageBinding>() {
             .resize(width, height)
             .into(binding?.image, object : Callback {
                 override fun onSuccess() {
-                    Picasso.get()
-                        .load(viewModel.image?.fullImageUrl)
-                        .noPlaceholder()
-                        .noFade()
-                        .resize(width, height)
-                        .into(binding?.image)
+                    binding?.image?.let { targetView ->
+                        Picasso.get()
+                            .load(viewModel.image?.fullImageUrl)
+                            .noPlaceholder()
+                            .noFade()
+                            .resize(width, height)
+                            .into(targetView)
+                    }
                 }
 
                 override fun onError(e: Exception?) {
