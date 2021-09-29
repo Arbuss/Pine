@@ -34,6 +34,10 @@ class SearchViewModel @Inject constructor(
         }
     }
 
+    fun clearList() {
+        photos.clear()
+    }
+
     fun search(query: String) {
         job?.cancel()
         job = viewModelScope.launch(Dispatchers.IO) {
