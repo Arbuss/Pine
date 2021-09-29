@@ -19,6 +19,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import java.io.File
@@ -104,7 +105,7 @@ abstract class ListedViewModel(
         }
     }
 
-    fun observeLiked() {
+    fun observeFavorites() {
         viewModelScope.launch(Dispatchers.IO) {
             favoriteImages.collect { favoriteList ->
                 val tempList = mutableListOf<ImageItem>()
@@ -112,7 +113,6 @@ abstract class ListedViewModel(
                     // TODO оптимизировать
                     tempList.add(castImageToAdapterItem(image.copy(isLiked = favoriteList.contains(image))))
                 }
-
                 _images.value = tempList
             }
         }
@@ -178,6 +178,7 @@ abstract class ListedViewModel(
                 imageWidth,
                 imageHeight,
                 blurHashUri,
-                image.isLiked)
+                favoriteImages.first()
+                    .any { favoriteImage -> favoriteImage.id == image.id })
     }
 }
